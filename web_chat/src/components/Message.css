@@ -1,0 +1,29 @@
+.message {
+  display: flex;
+  margin: 10px;
+}
+
+.message__profile-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.message__username {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message--local {
+  align-self: flex-end;
+}
+
+.message--remote {
+  align-self: flex-start;
+}
