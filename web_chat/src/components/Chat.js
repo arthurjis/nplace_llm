@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import Message from './Message';
 import Input from './Input';
 import './Chat.css';
@@ -8,6 +8,7 @@ import { sendMessageToChatbot } from '../services/chatbot';
 function Chat() {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
+  const messagesRef = useRef(null);
 
  useEffect(() => {
    // Listen for new messages from the server
@@ -21,6 +22,12 @@ function Chat() {
    };
  }, [socket]);
 
+ useEffect(() => {
+  if (messagesRef.current) {
+    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages]);
+
  const handleSendMessage = async (messageText) => {
    // Send the message to the server
    const message = {
@@ -32,26 +39,39 @@ function Chat() {
    setMessages((prevMessages) => [...prevMessages, message]);
    socket.emit('sendMessage', message);
 
-   // Send the message to the chatbot and display the response
-   const chatbotResponse = await sendMessageToChatbot(messageText);
-   if (chatbotResponse) {
-     const chatbotMessage = {
-       text: chatbotResponse,
-       username: 'Chatbot',
-       profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-       isLocal: false,
-     };
-     setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-     socket.emit('sendMessage', chatbotMessage);
-   }
+   // // Send the message to the chatbot and display the response
+   // const chatbotResponse = await sendMessageToChatbot(messageText);
+   // if (chatbotResponse) {
+   //   const chatbotMessage = {
+   //     text: chatbotResponse,
+   //     username: 'Chatbot',
+   //     profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
+   //     isLocal: false,
+   //   };
+   //   setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
+   //   socket.emit('sendMessage', chatbotMessage);
+   
+  // Hardcoded chatbot response
+  const chatbotResponse = 'This is a hardcoded response from the chatbot.';
+
+  const chatbotMessage = {
+    text: chatbotResponse,
+    username: 'Chatbot',
+    profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
+    isLocal: false,
+  };
+  setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
+  socket.emit('sendMessage', chatbotMessage);
  };
 
  return (
    <div className="chat">
-     {messages.map((message, index) => (
-       <Message key={index} message={message} isLocal={message.isLocal} />
-     ))}
-     <Input onSendMessage={handleSendMessage} />
+     <div className="chat-messages" ref={messagesRef}>
+       {messages.map((message, index) => (
+         <Message key={index} message={message} isLocal={message.isLocal} />
+       ))}
+     </div>
+     <Input className="chat-input" onSendMessage={handleSendMessage} />
    </div>
  );
 }

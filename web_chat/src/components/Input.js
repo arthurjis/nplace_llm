@@ -17,7 +17,7 @@ function Input({ onSendMessage }) {
         className="input__field"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message..."
+        placeholder="Type your message......"
       />
       <button type="submit" className="input__submit">Send</button>
     </form>
