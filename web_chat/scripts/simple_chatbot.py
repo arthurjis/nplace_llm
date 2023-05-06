@@ -16,16 +16,18 @@ class SimpleChatbot(ChatbotBase):
         ]
 
     def reply(self, input):
-        new_message = {"role": "user", "content": input}
-        self.messages.append(new_message)
-        response = openai.ChatCompletion.create(
-            model = self.model_name,
-            max_tokens = 1024,
-            temperature = 1,
-            messages = self.messages
-        )
 
-        return response["choices"][0]["message"]["content"]
+        return input
+        # new_message = {"role": "user", "content": input}
+        # self.messages.append(new_message)
+        # response = openai.ChatCompletion.create(
+        #     model = self.model_name,
+        #     max_tokens = 1024,
+        #     temperature = 1,
+        #     messages = self.messages
+        # )
+
+        # return response["choices"][0]["message"]["content"]
     
     
 
