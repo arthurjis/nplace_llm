@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@railway/cli": "^3.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -19,7 +20,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start-flask": " . venv/bin/activate && python src/flask_server/server.py",
-  	"start:both": "concurrently \"npm:start\" \"npm:start-flask\""
+    "start:both": "concurrently \"npm:start\" \"npm:start-flask\""
   },
   "eslintConfig": {
     "extends": [
