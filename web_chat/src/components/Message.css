@@ -45,7 +45,7 @@
   flex-direction: column;
   padding: 8px 12px;
   border-radius: 15px;
-  max-width: 70%;
+  max-width: 300px;
   word-break: break-word;
   text-align: left;
 }
