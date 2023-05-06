@@ -28,41 +28,65 @@ function Chat() {
     }
   }, [messages]);
 
- const handleSendMessage = async (messageText) => {
-   // Send the message to the server
-   const message = {
-     text: messageText,
-     username: 'You',
-     profilePhoto: 'https://example.com/your-photo.jpg', // Replace with your photo URL
-     isLocal: true,
-   };
-   setMessages((prevMessages) => [...prevMessages, message]);
-   socket.emit('sendMessage', message);
+//  const handleSendMessage_old = async (messageText) => {
+//    // Send the message to the server
+//    const message = {
+//      text: messageText,
+//      username: 'You',
+//      profilePhoto: 'https://example.com/your-photo.jpg', // Replace with your photo URL
+//      isLocal: true,
+//    };
+//    setMessages((prevMessages) => [...prevMessages, message]);
+//    socket.emit('sendMessage', message);
 
-   // // Send the message to the chatbot and display the response
-   // const chatbotResponse = await sendMessageToChatbot(messageText);
-   // if (chatbotResponse) {
-   //   const chatbotMessage = {
-   //     text: chatbotResponse,
-   //     username: 'Chatbot',
-   //     profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-   //     isLocal: false,
-   //   };
-   //   setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-   //   socket.emit('sendMessage', chatbotMessage);
+//    // Send the message to the chatbot and display the response
+//    const chatbotResponse = await sendMessageToChatbot(messageText);
+//    if (chatbotResponse) {
+//      const chatbotMessage = {
+//        text: chatbotResponse,
+//        username: 'Chatbot',
+//        profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
+//        isLocal: false,
+//      };
+//      setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
+//      socket.emit('sendMessage', chatbotMessage);
    
-  // Hardcoded chatbot response
-  const chatbotResponse = 'This is a hardcoded response from the chatbot.';
+//   // Hardcoded chatbot response
+//   const chatbotResponse = 'This is a hardcoded response from the chatbot.';
 
-  const chatbotMessage = {
-    text: chatbotResponse,
-    username: 'Chatbot',
-    profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-    isLocal: false,
+//   const chatbotMessage = {
+//     text: chatbotResponse,
+//     username: 'aaaaa',
+//     profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
+//     isLocal: false,
+//   };
+//   setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
+//   socket.emit('sendMessage', chatbotMessage);
+//  };
+
+ async function handleSendMessage(messageText) {
+  // Add the user's message to the chat
+  const userMessage = {
+    text: messageText,
+    username: 'You',
+    isLocal: true,
   };
-  setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-  socket.emit('sendMessage', chatbotMessage);
- };
+  setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+  // Get response from chatbot
+  const chatbotResponse = await sendMessageToChatbot(messageText);
+  console.log("received from chatbot: ", chatbotResponse)
+
+  if (chatbotResponse) {
+    const chatbotMessage = {
+      text: chatbotResponse,
+      username: 'Chatbot',
+      // profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
+      isLocal: false,
+    }
+    setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
+  };
+}
 
  return (
    <div className="chat">
