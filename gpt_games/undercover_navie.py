@@ -7,10 +7,6 @@ import argparse
 from collections import Counter
 
 
-openai.api_key, MODEL_NAME = "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", "gpt-3.5-turbo"
-# openai.api_key, MODEL_NAME = "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", "gpt-4"
-# openai.api_key, MODEL_NAME = "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", "gpt-3.5-turbo"
-
 num_human_player = 1
 num_ai_player = 3
 num_undercover = 1

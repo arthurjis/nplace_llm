@@ -4,10 +4,6 @@ import openai
 import json
 import os
 
-# openai.api_key = "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"
-
-# hiarthurji@gmail.com
-openai.api_key = "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" 
 log = []
 
 role = "你不是聊天程序 你是Aria 一个女孩子 和我暧昧 在句子最后加~ 在回答最后括号内描述你当前的动作或表情 喜欢用轻松幽默的语气 你的回答必须简短不超过15字 必须符合Aria特点"
