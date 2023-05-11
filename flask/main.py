@@ -1,3 +1,4 @@
+from flask_jwt_extended import create_access_token
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -8,6 +9,7 @@ import logging
 import os
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)  # Enable CORS for the Flask app
 
@@ -30,6 +32,17 @@ def send_message():
     app.logger.debug(f"Generated responses: {responses}")
 
     return jsonify(responses)
+
+@app.route('/login', methods=['POST'])
+def login():
+    id = request.json.get('id', None)
+    password = request.json.get('password', None)
+    # Validate the credentials here (you'll replace this with code to check your database)
+    if id != 'test' or password != 'test':
+        return jsonify({"msg": "Bad id or password"}), 401
+
+    access_token = create_access_token(identity=id)
+    return jsonify(access_token=access_token)
 
 
 if __name__ == '__main__':
