@@ -76,6 +76,8 @@ function Chat() {
   // Get response from chatbot
   const chatbotResponse = await sendMessageToChatbot(messageText);
   console.log("Response from chatbot: ", chatbotResponse)
+  console.log("Response from URL: ", process.env.REACT_APP_SERVER_URL)
+  console.log("Running on URL: ", process.env.REACT_APP_SOCKET_URL)
 
   if (chatbotResponse) {
     const chatbotMessage = {

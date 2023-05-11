@@ -16,7 +16,8 @@ def index():
     socket_url = os.getenv("REACT_APP_SOCKET_URL")
     server_url = os.getenv("REACT_APP_SERVER_URL")
 
-    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅  " + str(port) + "   " + str(socket_url) + "   " + str(server_url)})
+    return jsonify({"Flask server running on port: " + str(port) + "\nSocket URL: " + str(socket_url) + "\nServer URL: " + str(server_url)})
+
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
