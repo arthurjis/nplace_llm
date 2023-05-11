@@ -1,37 +1,27 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-
 import React from 'react';
+import axios from 'axios';
 import Chat from './components/Chat';
+import LoginForm from './components/LoginForm';
 import './App.css';
 
 function App() {
+
+  const handleLogin = async (id, passcode) => {
+
+    const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
+    try {
+      const response = await axios.post(`${SERVER_URL}/login`, { id, passcode });
+      localStorage.setItem('token', response.data.access_token);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
   return (
     <div className="App">
+      <LoginForm onLogin={handleLogin} />
       <Chat />
     </div>
   );
