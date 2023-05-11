@@ -13,10 +13,14 @@ CORS(app)  # Enable CORS for the Flask app
 @app.route('/')
 def index():
     port = os.getenv("PORT", default=5000)
-    socket_url = os.getenv("REACT_APP_SOCKET_URL")
-    server_url = os.getenv("REACT_APP_SERVER_URL")
 
-    return jsonify({"Flask server running on port: " + str(port) + "\nSocket URL: " + str(socket_url) + "\nServer URL: " + str(server_url)})
+    # socket_url = os.getenv("REACT_APP_SOCKET_URL")
+    # server_url = os.getenv("REACT_APP_SERVER_URL")
+
+    return jsonify({"Flask server running on port: " + str(port) + "" 
+                    # "\nSocket URL: " + str(socket_url) + 
+                    # "\nServer URL: " + str(server_url)
+                    })
 
 
 @app.route('/send_message', methods=['POST'])
