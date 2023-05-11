@@ -1,14 +1,15 @@
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from datetime import datetime
 
 import logging
+import openai
 import os
 
 
@@ -44,14 +45,23 @@ def send_message():
 
 @app.route('/login', methods=['POST'])
 def login():
-    id = request.json.get('id', None)
-    passcode = request.json.get('passcode', None)
-    # Validate the credentials here (you'll replace this with code to check your database)
-    if id != 'test' or passcode != 'test':
-        return jsonify({"msg": "Bad id or passcode"}), 401
+    data = request.get_json()
 
-    access_token = create_access_token(identity=id)
-    return jsonify(access_token=access_token)
+    if not data or not data.get('id') or not data.get('passcode'):
+        return jsonify({'error': 'Must provide user ID and passcode'}), 400
+
+    user_id = data['id']
+    passcode = data['passcode']
+
+    users = mongo.db.users
+    user = users.find_one({'_id': user_id})
+
+    if not user or not check_password_hash(user['passcode'], passcode):
+        return jsonify({'error': 'Invalid user ID or passcode'}), 401
+
+    access_token = create_access_token(identity=user_id)
+
+    return jsonify({'access_token': access_token}), 200
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -72,6 +82,23 @@ def register():
     users.insert({'_id': user_id, 'passcode': hashed_passcode})
 
     return jsonify({'message': 'Registered successfully'}), 201
+
+@app.route('/chat', methods=['POST'])
+@jwt_required()
+def chat():
+    user_id = get_jwt_identity()
+    message = request.get_json().get('message')
+
+    if not message:
+        return jsonify({'error': 'Must provide a message'}), 400
+
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=message,
+        max_tokens=150,
+    )
+
+    return jsonify({'response': response.choices[0].text.strip()}), 200
 
 
 if __name__ == '__main__':
