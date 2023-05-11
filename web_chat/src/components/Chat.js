@@ -75,7 +75,7 @@ function Chat() {
 
   // Get response from chatbot
   const chatbotResponse = await sendMessageToChatbot(messageText);
-  console.log("received from chatbot: ", chatbotResponse)
+  console.log("Response from chatbot: ", chatbotResponse)
 
   if (chatbotResponse) {
     const chatbotMessage = {
