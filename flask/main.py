@@ -16,6 +16,9 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+
+
+print("aaaaaaaaa       " + os.environ.get('MONGO_URL'))
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
 app.config["MONGO_URI"] = os.environ.get('MONGO_URL') + '/test'
 mongo = PyMongo(app)
