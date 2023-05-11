@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:1010');
+const socket = io('https://nplacellm-production.up.railway.app');
 
 export default socket;
