@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
 
 app = Flask(__name__)
@@ -6,7 +6,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
+    port = os.getenv("PORT", default=5000)
+    host = request.host
+    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅  " + str(port) + "   " + str(host)})
 
 
 if __name__ == '__main__':
