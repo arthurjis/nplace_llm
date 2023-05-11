@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
+from datetime import datetime
+
 import logging
 import os
 
@@ -9,18 +11,13 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)  # Enable CORS for the Flask app
 
+current_time = datetime.now().time()
+time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 @app.route('/')
 def index():
-    port = os.getenv("PORT", default=5000)
-
-    # socket_url = os.getenv("REACT_APP_SOCKET_URL")
-    # server_url = os.getenv("REACT_APP_SERVER_URL")
-
-    return jsonify({"Flask server running on port: " + str(port) + "" 
-                    # "\nSocket URL: " + str(socket_url) + 
-                    # "\nServer URL: " + str(server_url)
-                    })
+    host = request.host
+    return jsonify("Flask server running on host: {}    Starting at {}".format(host, time_string))
 
 
 @app.route('/send_message', methods=['POST'])
