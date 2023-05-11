@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
-app.config["MONGO_URI"] = os.environ.get('MONGO_URL')
+app.config["MONGO_URI"] = os.environ.get('MONGO_URL') + '/test'
 mongo = PyMongo(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)  # Enable CORS for the Flask app
