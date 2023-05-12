@@ -19,6 +19,8 @@ load_dotenv()
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_ECHO'] = True
+
 app.logger.setLevel(logging.DEBUG)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -43,16 +45,16 @@ def index():
     return jsonify("Flask server running on host: {}    Starting at {}".format(host, time_string))
 
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    user_message = request.json['message']
-    app.logger.debug(f"Received user message: {user_message}")
+# @app.route('/send_message', methods=['POST'])
+# def send_message():
+#     user_message = request.json['message']
+#     app.logger.debug(f"Received user message: {user_message}")
 
-    # responses = simple_chatbot.reply(user_message)
-    responses = "hi there"
-    app.logger.debug(f"Generated responses: {responses}")
+#     # responses = simple_chatbot.reply(user_message)
+#     responses = "hi there"
+#     app.logger.debug(f"Generated responses: {responses}")
 
-    return jsonify(responses)
+#     return jsonify(responses)
 
 @app.route('/login', methods=['POST'])
 def login():
