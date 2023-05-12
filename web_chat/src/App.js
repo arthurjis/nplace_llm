@@ -1,28 +1,46 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import Chat from './components/Chat';
-import LoginForm from './components/LoginForm';
+import Login from './components/Login';
+import Registration from './components/Registration';
 import './App.css';
 
 function App() {
 
-  const handleLogin = async (id, passcode) => {
+  const [token, setToken] = useState(null);
+  const [showRegistration, setShowRegistration] = useState(false);
 
-    const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-
-    try {
-      const response = await axios.post(`${SERVER_URL}/login`, { id, passcode });
-      localStorage.setItem('token', response.data.access_token);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleLogin = (token) => {
+    setToken(token);
+    localStorage.setItem('token', token);
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  };
+
+  if (token) {
+    return (
+      <div className="App">
+        <Chat />
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    );
+  }
+
+  if (showRegistration) {
+    return (
+      <div className="App">
+        <Registration onLogin={handleLogin} />
+        <button onClick={() => setShowRegistration(false)}>Back</button>
+      </div>
+    );
+  }
 
   return (
     <div className="App">
-      <LoginForm onLogin={handleLogin} />
-      <Chat />
+      <Login onLogin={handleLogin} />
+      <button onClick={() => setShowRegistration(true)}>Register</button>
     </div>
   );
 }
