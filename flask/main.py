@@ -1,10 +1,10 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
-from flask_pymongo import PyMongo
 from flask_cors import CORS
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -16,15 +16,17 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-
-
-# print("aaaaaaaaa       " + os.environ.get('MONGO_URL'))
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
-app.config["MONGO_URI"] = os.environ.get('MONGO_URL')
-mongo = PyMongo(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-CORS(app)  # Enable CORS for the Flask app
-jwt = JWTManager(app)  # add this line
+CORS(app)
+jwt = JWTManager(app)
+
+client = MongoClient(os.environ.get('MONGO_URL'))
+db = client['test']
+
+
+print(os.environ.get('MONGO_URL'))
+print("aaaaaa " + db.name)
 
 current_time = datetime.now().time()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -56,7 +58,7 @@ def login():
     user_id = data['id']
     passcode = data['passcode']
 
-    users = mongo.db.users_db
+    users = db.users
     user = users.find_one({'_id': user_id})
 
     if not user or not check_password_hash(user['passcode'], passcode):
@@ -78,9 +80,14 @@ def register():
 
     hashed_passcode = generate_password_hash(passcode)
 
-    users = mongo.db.users
+    users = db.users
+
+    print("aaaaaa  bb   " + users.name)
+
     if users.find_one({'_id': user_id}):
         return jsonify({'error': 'User ID already exists'}), 400
+
+    print("aaaaaa  cc   " + user_id)
 
     users.insert({'_id': user_id, 'passcode': hashed_passcode})
 
