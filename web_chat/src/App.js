@@ -43,22 +43,6 @@ function App() {
       <button onClick={() => setShowRegistration(true)}>Register</button>
     </div>
   );
-
-
-  // return (
-  //   <div className="App">
-  //     {token ? (
-  //       <Chat />
-  //     ) : showRegistration ? (
-  //       <Registration onLogin={handleLogin} />
-  //     ) : (
-  //       <>
-  //         <Login onLogin={handleLogin} />
-  //         <button onClick={() => setShowRegistration(true)}>Register</button>
-  //       </>
-  //     )}
-  //   </div>
-  // );
 }
 
 export default App;
