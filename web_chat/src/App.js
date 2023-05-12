@@ -14,22 +14,51 @@ function App() {
     localStorage.setItem('token', token);
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  };
 
+  if (token) {
+    return (
+      <div className="App">
+        <Chat />
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    );
+  }
+
+  if (showRegistration) {
+    return (
+      <div className="App">
+        <Registration onLogin={handleLogin} />
+        <button onClick={() => setShowRegistration(false)}>Back</button>
+      </div>
+    );
+  }
 
   return (
     <div className="App">
-      {token ? (
-        <Chat />
-      ) : showRegistration ? (
-        <Registration onLogin={handleLogin} />
-      ) : (
-        <>
-          <Login onLogin={handleLogin} />
-          <button onClick={() => setShowRegistration(true)}>Register</button>
-        </>
-      )}
+      <Login onLogin={handleLogin} />
+      <button onClick={() => setShowRegistration(true)}>Register</button>
     </div>
   );
+
+
+  // return (
+  //   <div className="App">
+  //     {token ? (
+  //       <Chat />
+  //     ) : showRegistration ? (
+  //       <Registration onLogin={handleLogin} />
+  //     ) : (
+  //       <>
+  //         <Login onLogin={handleLogin} />
+  //         <button onClick={() => setShowRegistration(true)}>Register</button>
+  //       </>
+  //     )}
+  //   </div>
+  // );
 }
 
 export default App;
