@@ -18,9 +18,9 @@ load_dotenv()
 app = Flask(__name__)
 
 
-print("aaaaaaaaa       " + os.environ.get('MONGO_URL'))
+# print("aaaaaaaaa       " + os.environ.get('MONGO_URL'))
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
-app.config["MONGO_URI"] = os.environ.get('MONGO_URL') + '/test'
+app.config["MONGO_URI"] = os.environ.get('MONGO_URL')
 mongo = PyMongo(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)  # Enable CORS for the Flask app
@@ -56,7 +56,7 @@ def login():
     user_id = data['id']
     passcode = data['passcode']
 
-    users = mongo.db.users
+    users = mongo.db.users_db
     user = users.find_one({'_id': user_id})
 
     if not user or not check_password_hash(user['passcode'], passcode):
