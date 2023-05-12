@@ -28,42 +28,6 @@ function Chat() {
     }
   }, [messages]);
 
-//  const handleSendMessage_old = async (messageText) => {
-//    // Send the message to the server
-//    const message = {
-//      text: messageText,
-//      username: 'You',
-//      profilePhoto: 'https://example.com/your-photo.jpg', // Replace with your photo URL
-//      isLocal: true,
-//    };
-//    setMessages((prevMessages) => [...prevMessages, message]);
-//    socket.emit('sendMessage', message);
-
-//    // Send the message to the chatbot and display the response
-//    const chatbotResponse = await sendMessageToChatbot(messageText);
-//    if (chatbotResponse) {
-//      const chatbotMessage = {
-//        text: chatbotResponse,
-//        username: 'Chatbot',
-//        profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-//        isLocal: false,
-//      };
-//      setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-//      socket.emit('sendMessage', chatbotMessage);
-   
-//   // Hardcoded chatbot response
-//   const chatbotResponse = 'This is a hardcoded response from the chatbot.';
-
-//   const chatbotMessage = {
-//     text: chatbotResponse,
-//     username: 'aaaaa',
-//     profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-//     isLocal: false,
-//   };
-//   setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-//   socket.emit('sendMessage', chatbotMessage);
-//  };
-
  async function handleSendMessage(messageText) {
   // Add the user's message to the chat
   const userMessage = {
@@ -75,9 +39,9 @@ function Chat() {
 
   // Get response from chatbot
   const chatbotResponse = await sendMessageToChatbot(messageText);
-  console.log("Response from chatbot: ", chatbotResponse)
-  console.log("Response from URL: ", process.env.REACT_APP_SERVER_URL)
-  console.log("Running on URL: ", process.env.REACT_APP_SOCKET_URL)
+  // console.log("Response from chatbot: ", chatbotResponse)
+  // console.log("Response from URL: ", process.env.REACT_APP_SERVER_URL)
+  // console.log("Running on URL: ", process.env.REACT_APP_SOCKET_URL)
 
   if (chatbotResponse) {
     const chatbotMessage = {
