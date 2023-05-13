@@ -19,7 +19,6 @@ load_dotenv()
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-# app.config['SQLALCHEMY_ECHO'] = True
 
 app.logger.setLevel(logging.DEBUG)
 
@@ -32,10 +31,7 @@ def create_tables():
     with app.app_context():
         db.create_all()
 
-app.logger.debug("Begin creating tables")
 create_tables()
-app.logger.debug("Done creating tables")
-
 current_time = datetime.now().time()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -154,27 +150,6 @@ def get_chat_history():
     formatted_messages = [{"sender_id": message.sender_id, "content": message.content, "role": message.role, "timestamp": message.timestamp.isoformat()} for message in messages]
 
     return jsonify({"success": True, "messages": formatted_messages})
-
-
-
-# @app.route('/send_message', methods=['POST'])
-# @jwt_required()
-# def send_message():
-#     user_message = request.json['message']
-#     app.logger.debug(f"Received user message: {user_message}")
-
-#     # Save message to database
-#     user_id = get_jwt_identity()
-#     new_message = ChatMessages(user_id=user_id, message=user_message)
-#     db.session.add(new_message)
-#     db.session.commit()
-
-#     # Fake a response for the sake of the example
-#     responses = "hi there"
-#     app.logger.debug(f"Generated responses: {responses}")
-
-#     return jsonify(responses)
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
