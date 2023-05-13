@@ -99,10 +99,9 @@ def start_chat():
 def send_message(data):
     user_id = get_jwt_identity()
     chat_session_id = data['chat_session_id']
-    message_text = data['message']
+    message_text = data['message_text']
 
     chat_session = ChatSessions.query.get(chat_session_id)
-    
     if not chat_session or user_id not in [user.id for user in chat_session.users]:
         return jsonify({"msg": "Chat session not found"}), 400
 
@@ -116,6 +115,10 @@ def send_message(data):
     db.session.add(chatbot_message)
     db.session.commit()
 
+    # Emit the new_message event for the user's message
+    emit('new_message', {'sender_id': user_id, 'content': message_text, 'role': 'user'}, room=request.sid)
+
+    # Emit the new_message event for the chatbot's message
     emit('new_message', {'sender_id': 'chatbot1', 'content': chatbot_response, 'role': 'assistant'}, room=request.sid)
 
 @socketio.on('get_chat_history')
