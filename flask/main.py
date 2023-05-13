@@ -72,84 +72,67 @@ def register():
 
     return jsonify({"msg": "User created"}), 201
 
-@app.route('/start_chat', methods=['POST'])
+@socketio.on('start_chat')
 @jwt_required()
 def start_chat():
     user_id = get_jwt_identity()
-
-    # Get the user from the database
     user = Users.query.get(user_id)
-    if not user:
-        return jsonify({'msg': 'User not found'}), 400
 
-    # Create a new chat session
+    if not user:
+        return jsonify({"msg": "User not found"}), 400
+
     chat_session = ChatSessions()
     chat_session.users.append(user)
 
-    # Add a default chatbot to the session
     chatbot = Chatbots.query.first()
     if not chatbot:
-        return jsonify({'msg': 'Chatbot not found'}), 400
+        return jsonify({"msg": "Chatbot not found"}), 400
     chat_session.chatbots.append(chatbot)
 
-    # Commit the changes to the database
     db.session.add(chat_session)
     db.session.commit()
 
-    return jsonify({'msg': 'Chat session started', 'chat_session_id': chat_session.id})
+    emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
 
-@app.route('/send_message', methods=['POST'])
+@socketio.on('send_message')
 @jwt_required()
-def send_message():
+def send_message(data):
     user_id = get_jwt_identity()
-    chat_session_id = request.json['chat_session_id']
-    message_content = request.json['message_content']
-    
-    # Find the chat session
-    chat_session = ChatSessions.query.get(chat_session_id)
+    chat_session_id = data['chat_session_id']
+    message_text = data['message']
 
-    # Check if the chat session exists and the user is part of it
-    if not chat_session or user_id not in [user.id for user in chat_session.users]:
-        return jsonify({"error": "Invalid chat session"}), 400
+    chat_session = ChatSessions.query.get(chat_session_id)
     
-    # Add the user's message to the database
-    new_message = ChatMessages(chat_session_id=chat_session_id, sender_id=user_id, content=message_content, role='user')
+    if not chat_session or user_id not in [user.id for user in chat_session.users]:
+        return jsonify({"msg": "Chat session not found"}), 400
+
+    new_message = ChatMessages(chat_session_id=chat_session_id, sender_id=user_id, content=message_text, role='user')
     db.session.add(new_message)
     db.session.commit()
 
-    # Generate a response using OpenAI's API
-    # messages_for_api = [{"role": message.role, "content": message.content} for message in chat_session.messages.order_by(ChatMessages.timestamp.asc()).all()]
-    # chatbot_responses = generate_chatbot_responses(messages_for_api)
-    chatbot_responses = "hi there"
-
-    # Save chatbot's responses to the database
-    for response in chatbot_responses:
-        chatbot_message = ChatMessages(chat_session_id=chat_session_id, sender_id=response['sender_id'], content=response['content'], role='assistant')
-        db.session.add(chatbot_message)
+    # Here we're simulating a chatbot response for the sake of simplicity
+    chatbot_response = "Hello, there!"
+    chatbot_message = ChatMessages(chat_session_id=chat_session_id, sender_id='chatbot1', content=chatbot_response, role='assistant')
+    db.session.add(chatbot_message)
     db.session.commit()
 
-    return jsonify({"success": True, "chatbot_responses": chatbot_responses})
+    emit('new_message', {'sender_id': 'chatbot1', 'content': chatbot_response, 'role': 'assistant'}, room=request.sid)
 
-@app.route('/get_chat_history', methods=['GET'])
+@socketio.on('get_chat_history')
 @jwt_required()
-def get_chat_history():
+def get_chat_history(data):
     user_id = get_jwt_identity()
-    chat_session_id = request.args.get('chat_session_id')
+    chat_session_id = data['chat_session_id']
 
-    # Find the chat session
     chat_session = ChatSessions.query.get(chat_session_id)
-
-    # Check if the chat session exists and the user is part of it
     if not chat_session or user_id not in [user.id for user in chat_session.users]:
-        return jsonify({"error": "Invalid chat session"}), 400
+        return jsonify({"msg": "Chat session not found"}), 400
 
-    # Fetch and sort chat messages
     messages = chat_session.messages.order_by(ChatMessages.timestamp.asc()).all()
-
-    # Format messages for response
     formatted_messages = [{"sender_id": message.sender_id, "content": message.content, "role": message.role, "timestamp": message.timestamp.isoformat()} for message in messages]
 
-    return jsonify({"success": True, "messages": formatted_messages})
+    emit('chat_history', {'messages': formatted_messages}, room=request.sid)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", default=5000))
+    socketio.run(app, debug=True, port=os.getenv("PORT", default=5000))
+
