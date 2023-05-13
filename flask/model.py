@@ -2,6 +2,17 @@ from datetime import datetime
 from database import db
 
 
+session_users = db.Table('session_users',
+    db.Column('user_id', db.String(255), db.ForeignKey('users.id'), primary_key=True),
+    db.Column('chat_session_id', db.Integer, db.ForeignKey('chat_sessions.id'), primary_key=True)
+)
+
+session_chatbots = db.Table('session_chatbots',
+    db.Column('chatbot_id', db.String(255), db.ForeignKey('chatbots.id'), primary_key=True),
+    db.Column('chat_session_id', db.Integer, db.ForeignKey('chat_sessions.id'), primary_key=True)
+)
+
+
 class Users(db.Model):
     """
     Users table in the database. Each instance represents a user.
@@ -15,7 +26,7 @@ class Users(db.Model):
 
     id = db.Column(db.String(255), primary_key=True)
     passcode = db.Column(db.String(255), nullable=False)
-    chat_sessions = db.relationship('ChatSessions', secondary='session_users', backref='users')
+    chat_sessions = db.relationship('ChatSessions', secondary=session_users, backref=db.backref('session_users', lazy='dynamic'))
 
 
 class ChatSessions(db.Model):
@@ -31,8 +42,8 @@ class ChatSessions(db.Model):
     __tablename__ = 'chat_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
-    users = db.relationship('Users', secondary='session_users', backref='chat_sessions')
-    chatbots = db.relationship('Chatbots', secondary='session_chatbots', backref='chat_sessions')
+    users = db.relationship('Users', secondary=session_users)
+    chatbots = db.relationship('Chatbots', secondary=session_chatbots)
     messages = db.relationship('ChatMessages', backref='chat_session', lazy=True)
 
 
@@ -70,3 +81,5 @@ class Chatbots(db.Model):
     __tablename__ = 'chatbots'
 
     id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    chat_sessions = db.relationship('ChatSessions', secondary=session_chatbots, backref=db.backref('session_chatbots', lazy='dynamic'))
