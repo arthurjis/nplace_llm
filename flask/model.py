@@ -69,4 +69,4 @@ class Chatbots(db.Model):
     """
     __tablename__ = 'chatbots'
 
-    id = db
+    id = db.Column(db.String(255), primary_key=True)

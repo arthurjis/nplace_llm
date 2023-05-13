@@ -23,7 +23,7 @@ function App() {
   };
 
   useEffect(() => {
-    const newSocket = socketIOClient('${SERVER_URL}');
+    const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL);
     setSocket(newSocket);
     return () => newSocket.close();
   }, []);
