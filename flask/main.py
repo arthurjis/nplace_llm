@@ -97,13 +97,10 @@ def start_chat():
         chatbot = Chatbots(name="chatbot1")
         db.session.add(chatbot)
         db.session.commit()
-        app.logger.debug("New chatbot created and added to database.")
+        app.logger.debug("No chatbot found. New chatbot created and added to database.")
     session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
     db.session.add(session_chatbot)
     db.session.commit()
-
-    app.logger.debug("aaaa   Chat session started.")
-
 
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
 
