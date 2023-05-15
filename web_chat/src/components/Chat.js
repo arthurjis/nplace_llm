@@ -4,9 +4,11 @@ import Input from './Input';
 import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
+
 function Chat() {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
+  const [chatSessionId, setChatSessionId] = useState(null);
   const messagesRef = useRef(null);
 
   useEffect(() => {
@@ -14,18 +16,25 @@ function Chat() {
     socket.emit('start_chat');
 
     // Listen for new messages from the server
-    socket.on('newMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+    socket.on('new_message', (message) => {
+      console.log("Received new message: " + message['message_text'])
+      const botMessage = {
+        text: message['message_text'],
+        username: 'Chatbot',
+        isLocal: false,
+      };
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
     });
 
     // Listen for 'chat_session_started' from the server
     socket.on('chat_session_started', (data) => {
+      setChatSessionId(data.chat_session_id);
       console.log('Chat session started with id: ' + data.chat_session_id);
     });
 
     return () => {
       // Clean up the listener when the component is unmounted
-      socket.off('newMessage');
+      socket.off('new_message');
       socket.off('chat_session_started');
     };
   }, [socket]);
@@ -41,13 +50,17 @@ function Chat() {
   const userMessage = {
     text: messageText,
     username: 'You',
-    // role: 'user',
     isLocal: true,
   };
   setMessages((prevMessages) => [...prevMessages, userMessage]);
 
   // Emit the user's message to the server
-  socket.emit('message', messageText);
+  const msg = {
+    chat_session_id: chatSessionId,
+    message_text: messageText
+  };
+  socket.emit('send_message', msg);
+  console.log('Message sent: ', msg)
 }
 
  return (
