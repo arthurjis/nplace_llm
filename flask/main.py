@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from database import db
 
-from model import Users, Chatbots, ChatSessions, ChatMessages
+from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 
 import logging
 import os
@@ -75,31 +75,34 @@ def register():
 @socketio.on('start_chat')
 def start_chat():
     token = request.args.get('token')
-
     try:
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
-
     except Exception as e:
         emit('error', {'error': 'Invalid token'})
         return
     user = Users.query.get(user_id)
-
     if not user:
         return jsonify({"msg": "User not found"}), 400
 
     chat_session = ChatSessions()
-    chat_session.users.append(user)
-
-    chatbot = Chatbots.query.first()
-    if not chatbot:
-        return jsonify({"msg": "Chatbot not found"}), 406
-    chat_session.chatbots.append(chatbot)
-
     db.session.add(chat_session)
     db.session.commit()
 
-    app.logger.debug("aaaa     chat session started.")
+    session_user = SessionUsers(user_id=user.id, chat_session_id=chat_session.id)
+    db.session.add(session_user)
+
+    chatbot = Chatbots.query.first()
+    if not chatbot:
+        chatbot = Chatbots(name="chatbot1")
+        db.session.add(chatbot)
+        db.session.commit()
+        app.logger.debug("New chatbot created and added to database.")
+    session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
+    db.session.add(session_chatbot)
+    db.session.commit()
+
+    app.logger.debug("aaaa   Chat session started.")
 
 
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)

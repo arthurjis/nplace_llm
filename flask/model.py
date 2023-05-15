@@ -10,9 +10,10 @@ class SessionUsers(db.Model):
     users = db.relationship('Users', back_populates='chat_sessions')
     chat_sessions = db.relationship('ChatSessions', back_populates='users')
 
+
 class SessionChatbots(db.Model):
     __tablename__ = 'session_chatbots'
-    chatbot_id = db.Column(db.String(255), db.ForeignKey('chatbots.id'), primary_key=True)
+    chatbot_id = db.Column(db.Integer, db.ForeignKey('chatbots.id'), primary_key=True)
     chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_sessions.id'), primary_key=True)
 
     chatbots = db.relationship('Chatbots', back_populates='chat_sessions')
@@ -75,7 +76,6 @@ class ChatMessages(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
-
 class Chatbots(db.Model):
     """
     Chatbots table in the database. Each instance represents a chatbot.
@@ -87,6 +87,6 @@ class Chatbots(db.Model):
     """
     __tablename__ = 'chatbots'
 
-    id = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     chat_sessions = db.relationship('SessionChatbots', back_populates='chatbots')
