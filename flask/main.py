@@ -1,4 +1,4 @@
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
@@ -73,9 +73,16 @@ def register():
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
-@jwt_required()
 def start_chat():
-    user_id = get_jwt_identity()
+    token = request.args.get('token')
+
+    try:
+        decoded_token = decode_token(token)
+        user_id = decoded_token['sub']
+
+    except Exception as e:
+        emit('error', {'error': 'Invalid token'})
+        return
     user = Users.query.get(user_id)
 
     if not user:
@@ -86,11 +93,14 @@ def start_chat():
 
     chatbot = Chatbots.query.first()
     if not chatbot:
-        return jsonify({"msg": "Chatbot not found"}), 400
+        return jsonify({"msg": "Chatbot not found"}), 406
     chat_session.chatbots.append(chatbot)
 
     db.session.add(chat_session)
     db.session.commit()
+
+    app.logger.debug("aaaa     chat session started.")
+
 
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
 
