@@ -15,18 +15,31 @@ function App() {
   const handleLogin = (token) => {
     setToken(token);
     localStorage.setItem('token', token);
+
+    // Initialize socket connection here
+    const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
+      query: { token }
+    });
+    setSocket(newSocket);
   }
 
   const handleLogout = () => {
+    if (socket) {
+      socket.close();
+      setSocket(null);
+    }
     localStorage.removeItem('token');
     setToken(null);
   };
 
   useEffect(() => {
-    const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL);
-    setSocket(newSocket);
-    return () => newSocket.close();
-  }, []);
+    // Return function to clean up socket connection on unmount
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, [socket]);
 
   if (token) {
     return (
