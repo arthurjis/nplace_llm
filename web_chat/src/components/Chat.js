@@ -30,9 +30,10 @@ function Chat() {
  function handleSendMessage(messageText) {
   // Add the user's message to the chat
   const userMessage = {
-    content: messageText,
-    sender_id: 'You',
-    role: 'user',
+    text: messageText,
+    username: 'You',
+    // role: 'user',
+    isLocal: true,
   };
   setMessages((prevMessages) => [...prevMessages, userMessage]);
 
@@ -44,7 +45,7 @@ function Chat() {
    <div className="chat">
      <div className="chat-messages" ref={messagesRef}>
        {messages.map((message, index) => (
-         <Message key={index} message={message.content} isLocal={message.role === 'user'} />
+         <Message key={index} message={message} isLocal={message.isLocal} />
        ))}
      </div>
      <Input className="chat-input" onSendMessage={handleSendMessage} />
