@@ -9,17 +9,26 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
 
- useEffect(() => {
-   // Listen for new messages from the server
-   socket.on('newMessage', (message) => {
-     setMessages((prevMessages) => [...prevMessages, message]);
-   });
+  useEffect(() => {
+    // Emit 'start_chat' when the component mounts
+    socket.emit('start_chat');
 
-   return () => {
-     // Clean up the listener when the component is unmounted
-     socket.off('newMessage');
-   };
- }, [socket]);
+    // Listen for new messages from the server
+    socket.on('newMessage', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Listen for 'chat_session_started' from the server
+    socket.on('chat_session_started', (data) => {
+      console.log('Chat session started with id: ' + data.chat_session_id);
+    });
+
+    return () => {
+      // Clean up the listener when the component is unmounted
+      socket.off('newMessage');
+      socket.off('chat_session_started');
+    };
+  }, [socket]);
 
  useEffect(() => {
   if (messagesRef.current) {
