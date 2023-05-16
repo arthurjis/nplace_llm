@@ -10,6 +10,7 @@ from database import db
 
 from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 
+import simple_gpt_chatbot
 import logging
 import os
 
@@ -104,7 +105,6 @@ def start_chat():
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
     app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
 
-
 @socketio.on('send_message')
 def send_message(data):
     token = request.args.get('token')
@@ -129,8 +129,15 @@ def send_message(data):
     db.session.add(user_message)
     db.session.commit()
 
+    # Fetch chat session history
+    chat_session_history = simple_gpt_chatbot.get_chat_session_history(chat_session_id)
+
+    # Generate chatbot's response
+    response = simple_gpt_chatbot.generate_chatbot_response(chat_session_history)
+
+
     # Here we're simulating a chatbot response for the sake of simplicity
-    response = "Hello, there!"
+    # response = "Hello, there!"
     response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbot_id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
     db.session.add(response_message)
     db.session.commit()
@@ -143,21 +150,6 @@ def send_message(data):
     # emit('new_message', {'sender_id': 'chatbot1', 'content': response, 'role': 'assistant'}, room=request.sid)
    
 
-
-# @socketio.on('get_chat_history')
-# @jwt_required()
-# def get_chat_history(data):
-#     user_id = get_jwt_identity()
-#     chat_session_id = data['chat_session_id']
-
-#     chat_session = ChatSessions.query.get(chat_session_id)
-#     if not chat_session or user_id not in [user.id for user in chat_session.users]:
-#         return jsonify({"msg": "Chat session not found"}), 400
-
-#     messages = chat_session.messages.order_by(ChatMessages.timestamp.asc()).all()
-#     formatted_messages = [{"sender_id": message.sender_id, "content": message.content, "role": message.role, "timestamp": message.timestamp.isoformat()} for message in messages]
-
-#     emit('chat_history', {'messages': formatted_messages}, room=request.sid)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=os.getenv("PORT", default=5000))
