@@ -17,13 +17,8 @@ function Chat() {
 
     // Listen for new messages from the server
     socket.on('new_message', (message) => {
-      console.log("Received new message: " + message['message_text'])
-      const botMessage = {
-        text: message['message_text'],
-        username: 'Chatbot',
-        isLocal: false,
-      };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      console.debug("Received message: " + JSON.stringify(message));
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     // Listen for 'chat_session_started' from the server
@@ -48,6 +43,7 @@ function Chat() {
  function handleSendMessage(messageText) {
   // Add the user's message to the chat
   const userMessage = {
+    chat_session_id: chatSessionId,
     text: messageText,
     username: 'You',
     isLocal: true,
@@ -55,12 +51,8 @@ function Chat() {
   setMessages((prevMessages) => [...prevMessages, userMessage]);
 
   // Emit the user's message to the server
-  const msg = {
-    chat_session_id: chatSessionId,
-    message_text: messageText
-  };
-  socket.emit('send_message', msg);
-  console.log('Message sent: ', msg)
+  socket.emit('send_message', userMessage);
+  console.debug('Sent message: ', userMessage)
 }
 
  return (

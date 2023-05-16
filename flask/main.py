@@ -101,8 +101,9 @@ def start_chat():
     session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
     db.session.add(session_chatbot)
     db.session.commit()
-
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
+    app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
+
 
 @socketio.on('send_message')
 def send_message(data):
@@ -117,34 +118,30 @@ def send_message(data):
     if not user:
         return jsonify({"msg": "User not found"}), 400
 
-    print(data)
     chat_session_id = data['chat_session_id']
-    message_text = data['message_text']
+    message_text = data['text']
 
     chat_session = db.session.execute(db.select(ChatSessions).filter_by(id=chat_session_id)).scalar_one_or_none()
     if not chat_session or user_id not in [user.user_id for user in chat_session.users]:
         return jsonify({"msg": "Chat session not found"}), 400
 
-
-    user_message = ChatMessages(sender_id=user_id, sender_type='user', chat_session_id=chat_session_id, message=message_text)
+    user_message = ChatMessages(sender_id=user_id, sender_type='user', chat_session_id=chat_session.id, message=message_text)
     db.session.add(user_message)
     db.session.commit()
 
     # Here we're simulating a chatbot response for the sake of simplicity
     response = "Hello, there!"
-    response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbot_id, sender_type='chatbot', chat_session_id=chat_session_id, message=response)
-
-    # chatbot_message = ChatMessages(chat_session_id=chat_session_id, sender_id='chatbot1', content=chatbot_response, role='assistant')
+    response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbot_id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
     db.session.add(response_message)
     db.session.commit()
-
+    emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbots.name, 'isLocal': False}, room=request.sid)
+  
     # Emit the new_message event for the user's message
     # emit('new_message', {'sender_id': user_id, 'content': message_text, 'role': 'user'}, room=request.sid)
 
     # Emit the new_message event for the chatbot's message
     # emit('new_message', {'sender_id': 'chatbot1', 'content': response, 'role': 'assistant'}, room=request.sid)
-    emit('new_message', {'chat_session_id': chat_session_id, 'message_text': response}, room=request.sid)
-
+   
 
 
 # @socketio.on('get_chat_history')
