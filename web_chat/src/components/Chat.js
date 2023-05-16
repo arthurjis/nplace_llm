@@ -3,24 +3,36 @@ import Message from './Message';
 import Input from './Input';
 import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
-import { sendMessageToChatbot } from '../services/chatbot';
+
 
 function Chat() {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
+  const [chatSessionId, setChatSessionId] = useState(null);
   const messagesRef = useRef(null);
 
- useEffect(() => {
-   // Listen for new messages from the server
-   socket.on('newMessage', (message) => {
-     setMessages((prevMessages) => [...prevMessages, message]);
-   });
+  useEffect(() => {
+    // Emit 'start_chat' when the component mounts
+    socket.emit('start_chat');
 
-   return () => {
-     // Clean up the listener when the component is unmounted
-     socket.off('newMessage');
-   };
- }, [socket]);
+    // Listen for new messages from the server
+    socket.on('new_message', (message) => {
+      console.debug("Received message: " + JSON.stringify(message));
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Listen for 'chat_session_started' from the server
+    socket.on('chat_session_started', (data) => {
+      setChatSessionId(data.chat_session_id);
+      console.log('Chat session started with id: ' + data.chat_session_id);
+    });
+
+    return () => {
+      // Clean up the listener when the component is unmounted
+      socket.off('new_message');
+      socket.off('chat_session_started');
+    };
+  }, [socket]);
 
  useEffect(() => {
   if (messagesRef.current) {
@@ -28,66 +40,19 @@ function Chat() {
     }
   }, [messages]);
 
-//  const handleSendMessage_old = async (messageText) => {
-//    // Send the message to the server
-//    const message = {
-//      text: messageText,
-//      username: 'You',
-//      profilePhoto: 'https://example.com/your-photo.jpg', // Replace with your photo URL
-//      isLocal: true,
-//    };
-//    setMessages((prevMessages) => [...prevMessages, message]);
-//    socket.emit('sendMessage', message);
-
-//    // Send the message to the chatbot and display the response
-//    const chatbotResponse = await sendMessageToChatbot(messageText);
-//    if (chatbotResponse) {
-//      const chatbotMessage = {
-//        text: chatbotResponse,
-//        username: 'Chatbot',
-//        profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-//        isLocal: false,
-//      };
-//      setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-//      socket.emit('sendMessage', chatbotMessage);
-   
-//   // Hardcoded chatbot response
-//   const chatbotResponse = 'This is a hardcoded response from the chatbot.';
-
-//   const chatbotMessage = {
-//     text: chatbotResponse,
-//     username: 'aaaaa',
-//     profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-//     isLocal: false,
-//   };
-//   setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-//   socket.emit('sendMessage', chatbotMessage);
-//  };
-
- async function handleSendMessage(messageText) {
+ function handleSendMessage(messageText) {
   // Add the user's message to the chat
   const userMessage = {
+    chat_session_id: chatSessionId,
     text: messageText,
     username: 'You',
     isLocal: true,
   };
   setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-  // Get response from chatbot
-  const chatbotResponse = await sendMessageToChatbot(messageText);
-  console.log("Response from chatbot: ", chatbotResponse)
-  console.log("Response from URL: ", process.env.REACT_APP_SERVER_URL)
-  console.log("Running on URL: ", process.env.REACT_APP_SOCKET_URL)
-
-  if (chatbotResponse) {
-    const chatbotMessage = {
-      text: chatbotResponse,
-      username: 'Chatbot',
-      // profilePhoto: 'https://example.com/chatbot-photo.jpg', // Replace with chatbot photo URL
-      isLocal: false,
-    }
-    setMessages((prevMessages) => [...prevMessages, chatbotMessage]);
-  };
+  // Emit the user's message to the server
+  socket.emit('send_message', userMessage);
+  console.debug('Sent message: ', userMessage)
 }
 
  return (
@@ -103,4 +68,3 @@ function Chat() {
 }
 
 export default Chat;
-
