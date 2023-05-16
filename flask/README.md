@@ -47,5 +47,5 @@ The server has the following endpoints:
 The server handles the following SocketIO events:
 
 1. `start_chat`: This event starts a chat session for the user associated with the provided JWT token. It creates a new chat session, adds the user to the session, and assigns a chatbot to the session.
-2. `send_message`: This event handles messages sent by a user. It checks if the user and chat session exist, then saves the user's message in the database, and simulates a chatbot response.
+2. `send_message`: This event handles messages sent by a user. It checks if the user and chat session exist, then saves the user's message in the database, and returns a chatbot response.
 

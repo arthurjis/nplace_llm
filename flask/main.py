@@ -134,10 +134,6 @@ def send_message(data):
 
     # Generate chatbot's response
     response = simple_gpt_chatbot.generate_chatbot_response(chat_session_history)
-
-
-    # Here we're simulating a chatbot response for the sake of simplicity
-    # response = "Hello, there!"
     response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbot_id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
     db.session.add(response_message)
     db.session.commit()
