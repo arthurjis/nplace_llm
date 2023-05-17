@@ -4,6 +4,7 @@ import SocketContext from './contexts/SocketContext';
 import Chat from './components/Chat';
 import Login from './components/Login';
 import Registration from './components/Registration';
+import ChatSessionList from './components/ChatSessionList';
 import './App.css';
 
 
@@ -12,6 +13,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [chatSessions, setChatSessions] = useState(null);
 
   const handleLogin = (token) => {
     setToken(token);
@@ -22,6 +24,7 @@ function App() {
       query: { token }
     });
     setSocket(newSocket);
+    newSocket.emit('get_chat_sessions');
   }
 
   const handleLogout = () => {
@@ -42,10 +45,24 @@ function App() {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on('chat_sessions', data => {
+        setChatSessions(data.chat_sessions);
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off('chat_sessions');
+      }
+    }
+  }, [socket]);
+
   if (token) {
     return (
       <SocketContext.Provider value={socket}>
         <div className="App">
+          {chatSessions && <ChatSessionList chatSessions={chatSessions} />}
           <Chat />
           <button onClick={handleLogout}>Logout</button>
         </div>
