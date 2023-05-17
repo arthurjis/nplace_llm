@@ -42,6 +42,9 @@ class ChatSessions(db.Model):
     
     Columns:
     id: A unique integer that identifies a chat session.
+    name: A string that represents the name of the chat session.
+    last_viewed: A datetime object that represents when the chat session was last viewed.
+    creation_date: A datetime object that represents when the chat session was created.
     users: A list of users that are part of this chat session.
     chatbots: A list of chatbots that are part of this chat session.
     messages: A list of messages that belong to this chat session.
@@ -49,6 +52,9 @@ class ChatSessions(db.Model):
     __tablename__ = 'chat_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=True)
+    last_viewed = db.Column(db.DateTime, nullable=True)
+    creation_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     users = db.relationship('SessionUsers', back_populates='chat_sessions')
     chatbots = db.relationship('SessionChatbots', back_populates='chat_sessions')
     messages = db.relationship('ChatMessages', backref='chat_session', lazy=True)
