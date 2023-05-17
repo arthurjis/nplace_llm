@@ -74,7 +74,7 @@ def register():
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
-def start_chat():
+def start_chat(data):
     token = request.args.get('token')
     try:
         decoded_token = decode_token(token)
@@ -86,7 +86,9 @@ def start_chat():
     if not user:
         return jsonify({"msg": "User not found"}), 400
 
-    chat_session = ChatSessions()
+    # Get the session name from the client data, or generate a default name
+    session_name = data.get('name', datetime.now().strftime("Session on %Y-%m-%d %H:%M:%S"))
+    chat_session = ChatSessions(name=session_name)
     db.session.add(chat_session)
     db.session.commit()
 
@@ -102,7 +104,7 @@ def start_chat():
     session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
     db.session.add(session_chatbot)
     db.session.commit()
-    emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
+    emit('chat_session_started', {'chat_session_id': chat_session.id, 'session_name': session_name}, room=request.sid)
     app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
 
 @socketio.on('send_message')
