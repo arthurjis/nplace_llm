@@ -4,6 +4,7 @@ import SocketContext from './contexts/SocketContext';
 import Chat from './components/Chat';
 import Login from './components/Login';
 import Registration from './components/Registration';
+import ChatSessionList from './components/ChatSessionList';
 import './App.css';
 
 
@@ -46,8 +47,10 @@ function App() {
     return (
       <SocketContext.Provider value={socket}>
         <div className="App">
-          <Chat />
           <button onClick={handleLogout}>Logout</button>
+          <ChatSessionList token={token} />
+          <Chat />
+          
         </div>
       </SocketContext.Provider>
     );
