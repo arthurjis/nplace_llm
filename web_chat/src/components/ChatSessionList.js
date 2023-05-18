@@ -9,6 +9,23 @@ class ChatSessionList extends React.Component {
         }
     }
 
+    componentDidMount() {
+        console.log("fetching chat sessions...")
+        fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
+            headers: {
+                'Authorization': `Bearer ${this.props.token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Received ${data.chat_sessions.length} chat sessions`);
+            this.setState({ chatSessions: data.chat_sessions });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
     render() {
         return (
             <div>
