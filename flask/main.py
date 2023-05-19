@@ -184,7 +184,6 @@ def chat_history(session_id):
         return jsonify({"msg": "Chat session not found"}), 404
 
     # Verify the requesting user is part of this chat session
-    # You'll need to update this based on how you're associating users with chat sessions
     if user_id not in [user.user_id for user in chat_session.users]:
         return jsonify({"msg": "Unauthorized"}), 403
 
@@ -192,7 +191,6 @@ def chat_history(session_id):
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
 
     # Convert each message to a dictionary format for JSON response
-    # messages_dict = [{"sender_id": msg.sender_id, "sender_type": msg.sender_type, "message": msg.message, "timestamp": msg.timestamp.isoformat()} for msg in messages]
     messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages];
     print(messages_dict)
 
