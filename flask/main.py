@@ -171,22 +171,33 @@ def chat_sessions():
 
     return jsonify({"msg": "No chat sessions found"}), 404
 
-@app.route('/chat_sessions/<int:session_id>/history', methods=['GET'])
+@app.route('/chat_history/<int:session_id>', methods=['GET'])
 @jwt_required_wraps
 def chat_history(session_id):
+    # Get the user's identity from the JWT
+    user_id = get_jwt_identity()
+
     # Get the chat session from the database
     chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
 
     if not chat_session:
         return jsonify({"msg": "Chat session not found"}), 404
 
+    # Verify the requesting user is part of this chat session
+    # You'll need to update this based on how you're associating users with chat sessions
+    if user_id not in [user.user_id for user in chat_session.users]:
+        return jsonify({"msg": "Unauthorized"}), 403
+
     # Get the chat history for this chat session
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
 
     # Convert each message to a dictionary format for JSON response
-    messages_dict = [{"sender_id": msg.sender_id, "sender_type": msg.sender_type, "message": msg.message, "timestamp": msg.timestamp} for msg in messages]
+    # messages_dict = [{"sender_id": msg.sender_id, "sender_type": msg.sender_type, "message": msg.message, "timestamp": msg.timestamp.isoformat()} for msg in messages]
+    messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages];
+    print(messages_dict)
 
-    return jsonify(messages_dict)
+    return jsonify({"messages": messages_dict})
+
 
 
 if __name__ == '__main__':

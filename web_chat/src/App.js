@@ -13,6 +13,8 @@ function App() {
   const [token, setToken] = useState(null);
   const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [selectedChatSession, setSelectedChatSession] = useState(null);
+
 
   const handleLogin = (token) => {
     setToken(token);
@@ -34,6 +36,11 @@ function App() {
     setToken(null);
   };
 
+  const handleChatSessionSelect = (chatSession) => {
+    setSelectedChatSession(chatSession);
+    console.log("app.js selecting chat session " + chatSession)
+  }
+
   useEffect(() => {
     // Return function to clean up socket connection on unmount
     return () => {
@@ -47,10 +54,14 @@ function App() {
     return (
       <SocketContext.Provider value={socket}>
         <div className="App">
-          <button onClick={handleLogout}>Logout</button>
-          <ChatSessionList token={token} />
-          <Chat />
-          
+          <div className="flex-container">
+            <ChatSessionList token={token} onChatSessionSelect={handleChatSessionSelect} />
+            <div>
+              <button onClick={handleLogout}>Logout</button>
+              <Chat selectedChatSession={selectedChatSession} />
+            </div>
+
+          </div>
         </div>
       </SocketContext.Provider>
     );

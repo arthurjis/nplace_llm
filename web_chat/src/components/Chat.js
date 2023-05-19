@@ -5,15 +5,35 @@ import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
 
-function Chat() {
+function Chat({ selectedChatSession }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
-  const [chatSessionId, setChatSessionId] = useState(null);
   const messagesRef = useRef(null);
 
   useEffect(() => {
-    // Emit 'start_chat' when the component mounts
-    socket.emit('start_chat');
+    if (selectedChatSession) {
+      // Clear current messages
+      setMessages([]);
+
+      // Load chat history from the server
+      fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          setMessages(data.messages);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  }, [selectedChatSession]);
+
+  useEffect(() => {
+    // // Emit 'start_chat' when the component mounts
+    // socket.emit('start_chat');
 
     // Listen for new messages from the server
     socket.on('new_message', (message) => {
@@ -22,10 +42,10 @@ function Chat() {
     });
 
     // Listen for 'chat_session_started' from the server
-    socket.on('chat_session_started', (data) => {
-      setChatSessionId(data.chat_session_id);
-      console.log('Chat session started with id: ' + data.chat_session_id);
-    });
+    // socket.on('chat_session_started', (data) => {
+    //   setChatSessionId(data.chat_session_id);
+    //   console.log('Chat session started with id: ' + data.chat_session_id);
+    // });
 
     return () => {
       // Clean up the listener when the component is unmounted
@@ -43,7 +63,7 @@ function Chat() {
  function handleSendMessage(messageText) {
   // Add the user's message to the chat
   const userMessage = {
-    chat_session_id: chatSessionId,
+    chat_session_id: selectedChatSession,
     text: messageText,
     username: 'You',
     isLocal: true,

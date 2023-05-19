@@ -3,16 +3,20 @@ import React from 'react';
 class ChatSessionItem extends React.Component {
     constructor(props) {
         super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        this.props.onSelect(this.props.chatSession.id);
     }
 
     render() {
-        const { chatSession } = this.props;
+        const { name } = this.props.chatSession;
         return (
-            <div>
-                <h3>{chatSession.name}</h3>
-                <p>Last opened: {chatSession.last_opened}</p>
+            <div onClick={this.handleClick}>
+                <h3>{name}</h3>
             </div>
-        )
+        );
     }
 }
 

@@ -19,6 +19,7 @@ class ChatSessionList extends React.Component {
         .then(response => response.json())
         .then(data => {
             console.log(`Received ${data.chat_sessions.length} chat sessions`);
+            console.log(data.chat_sessions);
             this.setState({ chatSessions: data.chat_sessions });
         })
         .catch((error) => {
@@ -31,7 +32,12 @@ class ChatSessionList extends React.Component {
             <div>
                 <h2>Chat Sessions</h2>
                 {this.state.chatSessions.map((chatSession, index) => 
-                    <ChatSessionItem key={index} chatSession={chatSession} />
+                    <ChatSessionItem 
+                        key={index} 
+                        chatSession={chatSession}
+                        // passing the handleChatSessionSelect prop down to ChatSessionItem
+                        onSelect={this.props.onChatSessionSelect} 
+                    />
                 )}
             </div>
         )
