@@ -49,7 +49,7 @@ function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions
       socket.off('new_message');
       socket.off('chat_session_started');
     };
-  }, [socket]);
+  }, [socket, setSelectedChatSession]);
 
   useEffect(() => {
     if (messagesRef.current) {
