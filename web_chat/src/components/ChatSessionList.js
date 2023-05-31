@@ -9,7 +9,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
   // Re-fetch chat sessions whenever refreshChatSessionsSignal changes
   useEffect(() => {
     fetchChatSessions();
-  }, [token, refreshChatSessionsSignal]); // Here
+  }, [token, refreshChatSessionsSignal, fetchChatSessions]);
 
   // Create a new function for fetching chat sessions
   const fetchChatSessions = () => {
