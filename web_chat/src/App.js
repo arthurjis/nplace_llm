@@ -14,6 +14,7 @@ function App() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
   const [selectedChatSession, setSelectedChatSession] = useState(null);
+  const [refreshChatSessions, setRefreshChatSessions] = useState(false);
 
 
   const handleLogin = (token) => {
@@ -32,6 +33,7 @@ function App() {
       socket.close();
       setSocket(null);
     }
+    setSelectedChatSession(null);
     localStorage.removeItem('token');
     setToken(null);
   };
@@ -55,10 +57,21 @@ function App() {
       <SocketContext.Provider value={socket}>
         <div className="App">
           <div className="flex-container">
-            <ChatSessionList token={token} onChatSessionSelect={handleChatSessionSelect} />
+            {/* passed refreshChatSessions and its setter to ChatSessionList */}
+            <ChatSessionList 
+              token={token} 
+              onChatSessionSelect={handleChatSessionSelect} 
+              refreshChatSessions={refreshChatSessions}
+              setRefreshChatSessions={setRefreshChatSessions}
+            />
             <div>
               <button onClick={handleLogout}>Logout</button>
-              <Chat setSelectedChatSession={setSelectedChatSession} selectedChatSession={selectedChatSession}/>
+              {/* passed setRefreshChatSessions to Chat */}
+              <Chat 
+                setSelectedChatSession={setSelectedChatSession} 
+                selectedChatSession={selectedChatSession}
+                setRefreshChatSessions={setRefreshChatSessions}
+              />
             </div>
           </div>
         </div>

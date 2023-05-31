@@ -84,7 +84,7 @@ def register():
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
-def start_chat():
+def start_chat(data):
     token = request.args.get('token')
     try:
         decoded_token = decode_token(token)
@@ -114,6 +114,7 @@ def start_chat():
     db.session.commit()
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
     app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
+    return {'chat_session_id': chat_session.id}
 
 @socketio.on('send_message')
 def send_message(data):
