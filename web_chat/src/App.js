@@ -4,6 +4,7 @@ import SocketContext from './contexts/SocketContext';
 import Chat from './components/Chat';
 import Login from './components/Login';
 import Registration from './components/Registration';
+import ChatSessionList from './components/ChatSessionList';
 import './App.css';
 
 
@@ -12,6 +13,9 @@ function App() {
   const [token, setToken] = useState(null);
   const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [selectedChatSession, setSelectedChatSession] = useState(null);
+  const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
+
 
   const handleLogin = (token) => {
     setToken(token);
@@ -29,8 +33,22 @@ function App() {
       socket.close();
       setSocket(null);
     }
+    setSelectedChatSession(null);
     localStorage.removeItem('token');
     setToken(null);
+  };
+
+  const handleStartChat = () => {
+    setSelectedChatSession(null);
+  }
+
+  const handleChatSessionSelect = (chatSession) => {
+    setSelectedChatSession(chatSession);
+    console.log("app.js selecting chat session " + chatSession)
+  }
+
+  const handleRefreshChatSessions = () => {
+    setRefreshChatSessionsSignal(Date.now());
   };
 
   useEffect(() => {
@@ -46,8 +64,22 @@ function App() {
     return (
       <SocketContext.Provider value={socket}>
         <div className="App">
-          <Chat />
-          <button onClick={handleLogout}>Logout</button>
+          <div className="flex-container">
+            <ChatSessionList 
+              token={token} 
+              onChatSessionSelect={handleChatSessionSelect} 
+              refreshChatSessionsSignal={refreshChatSessionsSignal} 
+            />
+            <div>
+              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleStartChat}>Start New Chat Session</button>
+              <Chat 
+                setSelectedChatSession={setSelectedChatSession} 
+                selectedChatSession={selectedChatSession}
+                refreshChatSessions={handleRefreshChatSessions}
+              />
+            </div>
+          </div>
         </div>
       </SocketContext.Provider>
     );

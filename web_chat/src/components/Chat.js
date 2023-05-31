@@ -5,16 +5,33 @@ import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
 
-function Chat() {
+function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
-  const [chatSessionId, setChatSessionId] = useState(null);
   const messagesRef = useRef(null);
 
   useEffect(() => {
-    // Emit 'start_chat' when the component mounts
-    socket.emit('start_chat');
+    if (selectedChatSession) {
+      // Load chat history from the server
+      fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          setMessages(data.messages);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+    else {
+      setMessages([]);
+    }
+  }, [selectedChatSession]);
 
+  useEffect(() => {
     // Listen for new messages from the server
     socket.on('new_message', (message) => {
       console.debug("Received message: " + JSON.stringify(message));
@@ -23,7 +40,7 @@ function Chat() {
 
     // Listen for 'chat_session_started' from the server
     socket.on('chat_session_started', (data) => {
-      setChatSessionId(data.chat_session_id);
+      setSelectedChatSession(data.chat_session_id);
       console.log('Chat session started with id: ' + data.chat_session_id);
     });
 
@@ -32,28 +49,38 @@ function Chat() {
       socket.off('new_message');
       socket.off('chat_session_started');
     };
-  }, [socket]);
+  }, [socket, setSelectedChatSession]);
 
- useEffect(() => {
-  if (messagesRef.current) {
-    messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      }
   }, [messages]);
 
- function handleSendMessage(messageText) {
-  // Add the user's message to the chat
-  const userMessage = {
-    chat_session_id: chatSessionId,
-    text: messageText,
-    username: 'You',
-    isLocal: true,
-  };
-  setMessages((prevMessages) => [...prevMessages, userMessage]);
+  function handleSendMessage(messageText) {
+    // Add the user's message to the chat
+    const userMessage = {
+      chat_session_id: selectedChatSession,
+      text: messageText,
+      username: 'You',
+      isLocal: true,
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-  // Emit the user's message to the server
-  socket.emit('send_message', userMessage);
-  console.debug('Sent message: ', userMessage)
-}
+    if (!selectedChatSession) {
+      socket.emit('start_chat', {}, (response) => {
+        setSelectedChatSession(response.chat_session_id);
+        userMessage.chat_session_id = response.chat_session_id;
+        socket.emit('send_message', userMessage);
+        console.debug('Sent message: ', userMessage);
+        refreshChatSessions();
+      });
+    } else {
+      socket.emit('send_message', userMessage);
+      console.debug('Sent message: ', userMessage);
+    }
+  }
+  
 
  return (
    <div className="chat">

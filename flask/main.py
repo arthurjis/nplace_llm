@@ -4,8 +4,10 @@ from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
+from sqlalchemy import desc, asc
 from dotenv import load_dotenv
 from datetime import datetime
+from functools import wraps
 from database import db
 
 from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
@@ -13,6 +15,14 @@ from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, Ses
 import simple_gpt_chatbot
 import logging
 import os
+
+
+def jwt_required_wraps(func):
+    @wraps(func)
+    @jwt_required()
+    def wrapped(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapped
 
 
 load_dotenv()
@@ -74,7 +84,7 @@ def register():
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
-def start_chat():
+def start_chat(data):
     token = request.args.get('token')
     try:
         decoded_token = decode_token(token)
@@ -104,6 +114,7 @@ def start_chat():
     db.session.commit()
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
     app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
+    return {'chat_session_id': chat_session.id}
 
 @socketio.on('send_message')
 def send_message(data):
@@ -125,6 +136,7 @@ def send_message(data):
     if not chat_session or user_id not in [user.user_id for user in chat_session.users]:
         return jsonify({"msg": "Chat session not found"}), 400
 
+    chat_session.last_opened = datetime.utcnow()
     user_message = ChatMessages(sender_id=user_id, sender_type='user', chat_session_id=chat_session.id, message=message_text)
     db.session.add(user_message)
     db.session.commit()
@@ -138,15 +150,54 @@ def send_message(data):
     db.session.add(response_message)
     db.session.commit()
     emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbots.name, 'isLocal': False}, room=request.sid)
-  
-    # Emit the new_message event for the user's message
-    # emit('new_message', {'sender_id': user_id, 'content': message_text, 'role': 'user'}, room=request.sid)
 
-    # Emit the new_message event for the chatbot's message
-    # emit('new_message', {'sender_id': 'chatbot1', 'content': response, 'role': 'assistant'}, room=request.sid)
-   
+@app.route('/chat_sessions', methods=['GET'])
+@jwt_required_wraps  # Change this line
+def chat_sessions():
+    user_id = get_jwt_identity()
+    if user_id:
+        user = db.session.get(Users, user_id)
+        if user:
+            # Fetch user's chat sessions and order them by last_opened
+            chat_sessions = db.session.query(ChatSessions).\
+                join(SessionUsers).\
+                filter(SessionUsers.user_id == user_id).\
+                order_by(desc(ChatSessions.last_opened)).\
+                all()
+
+            # Extract chat session names, ids, and last_opened timestamps
+            result = [{'id': cs.id, 'name': cs.name, 'last_opened': cs.last_opened} for cs in chat_sessions]
+            app.logger.debug("Retrieved {} chat sessions from user {}".format(len(result), user_id))
+            return jsonify({"chat_sessions": result})
+
+    return jsonify({"msg": "No chat sessions found"}), 404
+
+@app.route('/chat_history/<int:session_id>', methods=['GET'])
+@jwt_required_wraps
+def chat_history(session_id):
+    # Get the user's identity from the JWT
+    user_id = get_jwt_identity()
+
+    # Get the chat session from the database
+    chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
+
+    if not chat_session:
+        return jsonify({"msg": "Chat session not found"}), 404
+
+    # Verify the requesting user is part of this chat session
+    if user_id not in [user.user_id for user in chat_session.users]:
+        return jsonify({"msg": "Unauthorized"}), 403
+
+    # Get the chat history for this chat session
+    messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
+
+    # Convert each message to a dictionary format for JSON response
+    messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages];
+    print(messages_dict)
+
+    return jsonify({"messages": messages_dict})
+
 
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=os.getenv("PORT", default=5000))
-

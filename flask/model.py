@@ -42,6 +42,12 @@ class ChatSessions(db.Model):
     
     Columns:
     id: A unique integer that identifies a chat session.
+    name: A string for chat session name.
+    last_opened: A datetime for last opened time
+    create_time: A datetime for creation time
+    session_type: A integer for session type
+    prompt_tokens: Total prompt tokens in this session
+    completion_tokens: Total completion tokens in this session
     users: A list of users that are part of this chat session.
     chatbots: A list of chatbots that are part of this chat session.
     messages: A list of messages that belong to this chat session.
@@ -49,6 +55,12 @@ class ChatSessions(db.Model):
     __tablename__ = 'chat_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False, default=lambda: datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+    last_opened = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    session_type = db.Column(db.Integer, nullable=False, default=0)
+    prompt_tokens = db.Column(db.Integer, nullable=False, default=0)
+    completion_tokens = db.Column(db.Integer, nullable=False, default=0)
     users = db.relationship('SessionUsers', back_populates='chat_sessions')
     chatbots = db.relationship('SessionChatbots', back_populates='chat_sessions')
     messages = db.relationship('ChatMessages', backref='chat_session', lazy=True)
