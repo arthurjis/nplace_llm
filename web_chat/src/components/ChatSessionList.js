@@ -1,6 +1,6 @@
 import ChatSessionItem from './ChatSessionItem';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Updated props, added refreshChatSessionsSignal
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
