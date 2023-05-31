@@ -58,9 +58,8 @@ function App() {
             <ChatSessionList token={token} onChatSessionSelect={handleChatSessionSelect} />
             <div>
               <button onClick={handleLogout}>Logout</button>
-              <Chat selectedChatSession={selectedChatSession} />
+              <Chat setSelectedChatSession={setSelectedChatSession} selectedChatSession={selectedChatSession}/>
             </div>
-
           </div>
         </div>
       </SocketContext.Provider>
