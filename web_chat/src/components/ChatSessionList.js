@@ -6,13 +6,8 @@ import React, { useState, useEffect } from 'react';
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
   const [chatSessions, setChatSessions] = useState([]);
 
-  // Re-fetch chat sessions whenever refreshChatSessionsSignal changes
-  useEffect(() => {
-    fetchChatSessions();
-  }, [token, refreshChatSessionsSignal, fetchChatSessions]);
-
-  // Create a new function for fetching chat sessions
-  const fetchChatSessions = () => {
+ // Define fetchChatSessions using useCallback
+const fetchChatSessions = useCallback(() => {
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -27,7 +22,12 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
     .catch((error) => {
       console.error('Error:', error);
     });
-  };
+  }, [token]); // token is the only dependency
+  
+  useEffect(() => {
+    fetchChatSessions();
+  }, [token, refreshChatSessionsSignal, fetchChatSessions]);
+  
 
   return (
     <div className="chat-session-list">
