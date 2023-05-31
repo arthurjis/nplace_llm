@@ -5,7 +5,7 @@ import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
 
-function Chat({ selectedChatSession, setSelectedChatSession, setRefreshChatSessions }) {
+function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -13,8 +13,8 @@ function Chat({ selectedChatSession, setSelectedChatSession, setRefreshChatSessi
   useEffect(() => {
     if (selectedChatSession) {
       // Clear current messages
-      setMessages([]);
-      console.debug("clearing messages");
+      // setMessages([]);
+      // console.debug("clearing messages");
 
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
@@ -24,6 +24,8 @@ function Chat({ selectedChatSession, setSelectedChatSession, setRefreshChatSessi
       })
         .then(response => response.json())
         .then(data => {
+          setMessages([]);
+          console.debug("clearing messages");
           setMessages(data.messages);
         })
         .catch((error) => {
@@ -74,7 +76,7 @@ function Chat({ selectedChatSession, setSelectedChatSession, setRefreshChatSessi
         userMessage.chat_session_id = response.chat_session_id;
         socket.emit('send_message', userMessage);
         console.debug('Sent message: ', userMessage);
-        setRefreshChatSessions(true);
+        refreshChatSessions();
       });
     } else {
       socket.emit('send_message', userMessage);
