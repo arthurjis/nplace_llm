@@ -14,7 +14,7 @@ function App() {
   const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
   const [selectedChatSession, setSelectedChatSession] = useState(null);
-  const [refreshChatSessions, setRefreshChatSessions] = useState(false);
+  const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
 
 
   const handleLogin = (token) => {
@@ -43,6 +43,10 @@ function App() {
     console.log("app.js selecting chat session " + chatSession)
   }
 
+  const handleRefreshChatSessions = () => {
+    setRefreshChatSessionsSignal(Date.now());
+  };
+
   useEffect(() => {
     // Return function to clean up socket connection on unmount
     return () => {
@@ -57,20 +61,17 @@ function App() {
       <SocketContext.Provider value={socket}>
         <div className="App">
           <div className="flex-container">
-            {/* passed refreshChatSessions and its setter to ChatSessionList */}
             <ChatSessionList 
               token={token} 
               onChatSessionSelect={handleChatSessionSelect} 
-              refreshChatSessions={refreshChatSessions}
-              setRefreshChatSessions={setRefreshChatSessions}
+              refreshChatSessionsSignal={refreshChatSessionsSignal} 
             />
             <div>
               <button onClick={handleLogout}>Logout</button>
-              {/* passed setRefreshChatSessions to Chat */}
               <Chat 
                 setSelectedChatSession={setSelectedChatSession} 
                 selectedChatSession={selectedChatSession}
-                setRefreshChatSessions={setRefreshChatSessions}
+                refreshChatSessions={handleRefreshChatSessions}
               />
             </div>
           </div>
