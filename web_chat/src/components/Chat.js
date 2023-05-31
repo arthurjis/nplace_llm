@@ -5,7 +5,7 @@ import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
 
-function Chat({ selectedChatSession, setSelectedChatSession }) {
+function Chat({ selectedChatSession, setSelectedChatSession, setRefreshChatSessions }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -14,6 +14,7 @@ function Chat({ selectedChatSession, setSelectedChatSession }) {
     if (selectedChatSession) {
       // Clear current messages
       setMessages([]);
+      console.debug("clearing messages");
 
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
@@ -58,26 +59,24 @@ function Chat({ selectedChatSession, setSelectedChatSession }) {
   }, [messages]);
 
   function handleSendMessage(messageText) {
-    // If there is no chat session selected, emit 'start_chat' to the server to create a new chat session
-    // The server should respond with a 'chat_session_started' event, which we will handle elsewhere
+    // Add the user's message to the chat
+    const userMessage = {
+      chat_session_id: selectedChatSession,
+      text: messageText,
+      username: 'You',
+      isLocal: true,
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
     if (!selectedChatSession) {
-      console.debug('No chat session selected, starting a new chat session...');
-      socket.emit('start_chat');
-    }
-  
-    // Wait until we have a chat session ID before we try to send a message
-    // This ensures we don't try to send a message to an undefined chat session
-    if (selectedChatSession) {
-      // Add the user's message to the chat
-      const userMessage = {
-        chat_session_id: selectedChatSession,
-        text: messageText,
-        username: 'You',
-        isLocal: true,
-      };
-      setMessages((prevMessages) => [...prevMessages, userMessage]);
-  
-      // Emit the user's message to the server
+      socket.emit('start_chat', {}, (response) => {
+        setSelectedChatSession(response.chat_session_id);
+        userMessage.chat_session_id = response.chat_session_id;
+        socket.emit('send_message', userMessage);
+        console.debug('Sent message: ', userMessage);
+        setRefreshChatSessions(true);
+      });
+    } else {
       socket.emit('send_message', userMessage);
       console.debug('Sent message: ', userMessage);
     }
