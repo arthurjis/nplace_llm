@@ -38,6 +38,10 @@ function App() {
     setToken(null);
   };
 
+  const handleStartChat = () => {
+    setSelectedChatSession(null);
+  }
+
   const handleChatSessionSelect = (chatSession) => {
     setSelectedChatSession(chatSession);
     console.log("app.js selecting chat session " + chatSession)
@@ -68,6 +72,7 @@ function App() {
             />
             <div>
               <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleStartChat}>Start New Chat Session</button>
               <Chat 
                 setSelectedChatSession={setSelectedChatSession} 
                 selectedChatSession={selectedChatSession}

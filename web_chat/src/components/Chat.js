@@ -12,10 +12,6 @@ function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions
 
   useEffect(() => {
     if (selectedChatSession) {
-      // Clear current messages
-      // setMessages([]);
-      // console.debug("clearing messages");
-
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
         headers: {
@@ -24,13 +20,14 @@ function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions
       })
         .then(response => response.json())
         .then(data => {
-          setMessages([]);
-          console.debug("clearing messages");
           setMessages(data.messages);
         })
         .catch((error) => {
           console.error('Error:', error);
         });
+    }
+    else {
+      setMessages([]);
     }
   }, [selectedChatSession]);
 
