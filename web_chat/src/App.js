@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import socketIOClient from 'socket.io-client';
 import SocketContext from './contexts/SocketContext';
 import Chat from './components/Chat';
-import Login from './components/Login';
-import Registration from './components/Registration';
 import ChatSessionList from './components/ChatSessionList';
+import Login from './components/Login';
+import Signup from './components/Signup';
 import './App.css';
 
 
 function App() {
 
   const [token, setToken] = useState(null);
-  const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
   const [selectedChatSession, setSelectedChatSession] = useState(null);
   const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
-
 
   const handleLogin = (token) => {
     // Initialize socket connection here
@@ -84,26 +83,19 @@ function App() {
     );
   }
 
-  if (showRegistration) {
-    return (
+  return (
+    <Router>
       <SocketContext.Provider value={socket}>
         <div className="App">
-          <Registration onLogin={handleLogin} />
-          <button onClick={() => setShowRegistration(false)}>Back</button>
+          <Routes>
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Signup onLogin={handleLogin} />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+          </Routes>
         </div>
       </SocketContext.Provider>
-    );
-  }
-
-  return (
-    <SocketContext.Provider value={socket}>
-      <div className="App">
-        <Login onLogin={handleLogin} />
-        <button onClick={() => setShowRegistration(true)}>Register</button>
-      </div>
-    </SocketContext.Provider>
+    </Router>
   );
-
 }
 
 export default App;
