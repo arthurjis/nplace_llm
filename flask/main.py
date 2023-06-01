@@ -53,8 +53,8 @@ def index():
 
 @app.route('/login', methods=['POST'])
 def login():
-    id = request.json.get('id', None)
-    passcode = request.json.get('passcode', None)
+    id = request.json.get('email', None)
+    passcode = request.json.get('password', None)
     app.logger.debug("Received POST to login user: {} with passcode: {}".format(id, passcode))
 
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
@@ -67,8 +67,8 @@ def login():
 
 @app.route('/register', methods=['POST'])
 def register():
-    id = request.json.get('id', None)
-    passcode = request.json.get('passcode', None)
+    id = request.json.get('email', None)
+    passcode = request.json.get('password', None)
     app.logger.debug("Received POST to register user: {} with passcode: {}".format(id, passcode))
 
     # Check if user already exists
