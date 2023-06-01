@@ -18,14 +18,13 @@ function App() {
 
 
   const handleLogin = (token) => {
-    setToken(token);
-    localStorage.setItem('token', token);
-
     // Initialize socket connection here
     const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
       query: { token }
     });
     setSocket(newSocket);
+    setToken(token);
+    localStorage.setItem('token', token);
   }
 
   const handleLogout = () => {
