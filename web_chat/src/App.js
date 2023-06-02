@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/core/styles';
 import socketIOClient from 'socket.io-client';
 import SocketContext from './contexts/SocketContext';
 import Chat from './components/Chat';
-import Login from './components/Login';
-import Registration from './components/Registration';
 import ChatSessionList from './components/ChatSessionList';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import theme from './utils/ThemeUtils';
 import './App.css';
 
 
 function App() {
 
   const [token, setToken] = useState(null);
-  const [showRegistration, setShowRegistration] = useState(false);
   const [socket, setSocket] = useState(null);
   const [selectedChatSession, setSelectedChatSession] = useState(null);
   const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
 
-
   const handleLogin = (token) => {
-    setToken(token);
-    localStorage.setItem('token', token);
-
     // Initialize socket connection here
     const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
       query: { token }
     });
     setSocket(newSocket);
+    setToken(token);
+    localStorage.setItem('token', token);
   }
 
   const handleLogout = () => {
@@ -65,16 +65,16 @@ function App() {
       <SocketContext.Provider value={socket}>
         <div className="App">
           <div className="flex-container">
-            <ChatSessionList 
-              token={token} 
-              onChatSessionSelect={handleChatSessionSelect} 
-              refreshChatSessionsSignal={refreshChatSessionsSignal} 
+            <ChatSessionList
+              token={token}
+              onChatSessionSelect={handleChatSessionSelect}
+              refreshChatSessionsSignal={refreshChatSessionsSignal}
             />
             <div>
               <button onClick={handleLogout}>Logout</button>
               <button onClick={handleStartChat}>Start New Chat Session</button>
-              <Chat 
-                setSelectedChatSession={setSelectedChatSession} 
+              <Chat
+                setSelectedChatSession={setSelectedChatSession}
                 selectedChatSession={selectedChatSession}
                 refreshChatSessions={handleRefreshChatSessions}
               />
@@ -85,26 +85,21 @@ function App() {
     );
   }
 
-  if (showRegistration) {
-    return (
-      <SocketContext.Provider value={socket}>
-        <div className="App">
-          <Registration onLogin={handleLogin} />
-          <button onClick={() => setShowRegistration(false)}>Back</button>
-        </div>
-      </SocketContext.Provider>
-    );
-  }
-
   return (
-    <SocketContext.Provider value={socket}>
-      <div className="App">
-        <Login onLogin={handleLogin} />
-        <button onClick={() => setShowRegistration(true)}>Register</button>
-      </div>
-    </SocketContext.Provider>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <SocketContext.Provider value={socket}>
+          <div className="App">
+            <Routes>
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/register" element={<Signup onLogin={handleLogin} />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
+        </SocketContext.Provider>
+      </Router>
+    </ThemeProvider>
   );
-
 }
 
 export default App;

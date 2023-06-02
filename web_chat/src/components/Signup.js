@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box } from '@material-ui/core';
+import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
@@ -9,12 +9,14 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 
-function Login({ onLogin }) {
+function Signup({ onLogin }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [step, setStep] = useState(1);
     const [emailError, setEmailError] = useState(null);
-    const [loginError, setLoginError] = useState(null);
+    const [passwordError, setPasswordError] = useState(null);
+    const [accountExistError, setAccountExistError] = useState(null);
+    const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
 
@@ -39,13 +41,19 @@ function Login({ onLogin }) {
                 setStep(2);
             }
         } else {
+            if (password.length < 8) {
+                setPasswordError('Password must be at least 8 characters long.');
+                return;
+            }
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
             try {
-                const response = await axios.post(`${SERVER_URL}/login`, { email, password });
-                onLogin(response.data.access_token);
+                await axios.post(`${SERVER_URL}/register`, { email, password });
+                const loginResponse = await axios.post(`${SERVER_URL}/login`, { email, password });
+                onLogin(loginResponse.data.access_token);
+
             } catch (error) {
-                if (error.response.data.msg === 'Bad id or passcode') {
-                    setLoginError('Wrong email or password.');
+                if (error.response.data.msg === 'User already exists') {
+                    setAccountExistError('The user already exists.');
                 } else {
                     console.error(error);
                 }
@@ -59,7 +67,7 @@ function Login({ onLogin }) {
                 <form onSubmit={handleContinue}>
                     <Box pt={2} pb={2}>
                         <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold', fontSize: '32px' }}>
-                            {step === 1 ? 'Welcome back' : 'Enter your password'}
+                            Create your account
                         </Typography>
                     </Box>
                     {step === 1 ? (
@@ -98,7 +106,9 @@ function Login({ onLogin }) {
                                                     setStep(1);
                                                     setPassword("");
                                                     setEmailError(false);
-                                                    setLoginError(false);
+                                                    setPasswordError(false);
+                                                    setAccountExistError(false);
+                                                    setPasswordTouched(false);
                                                 }}
                                                 style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
                                                 <EditIcon />
@@ -107,6 +117,8 @@ function Login({ onLogin }) {
                                     ),
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
+                                error={!!accountExistError}
+                                helperText={<HelperText error={!!accountExistError}>{accountExistError}</HelperText>}
                             />
                             <TextField
                                 variant="outlined"
@@ -115,12 +127,10 @@ function Login({ onLogin }) {
                                 fullWidth
                                 label="Password"
                                 value={password}
-                                autoComplete="current-password"
+                                autoComplete="new-password"
                                 onChange={(e) => {
                                     setPassword(e.target.value);
-                                    if (e.target.value === '') {
-                                        setLoginError(false);
-                                    }
+                                    setPasswordTouched(true);
                                 }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
@@ -138,18 +148,25 @@ function Login({ onLogin }) {
                                     )
 
                                 }}
-                                error={!!loginError}
-                                helperText={<HelperText error={!!loginError}>{loginError}</HelperText>}
+                                error={!!passwordError}
+                                helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                             />
+                            {passwordTouched && !passwordError && (
+                                <Box pt={1.5}>
+                                    <OutlinedInput
+                                        notched
+                                        readOnly
+                                        fullWidth
+                                        value={
+                                            "Your password must contain:\n" +
+                                            " •  At least 8 characters"
+                                        }
+                                        multiline
+                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: 2 }}
+                                    />
+                                </Box>
+                            )}
                         </>
-                    )}
-                    {step === 2 && (
-                        // TODO implement forgot password
-                        <Box pt={0.6}>
-                            <Link component={RouterLink} to="/register" color="primary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
-                                Forgot password?
-                            </Link>
-                        </Box>
                     )}
                     <Box pt={3}>
                         <Button
@@ -164,9 +181,9 @@ function Login({ onLogin }) {
                     </Box>
                     <Box pt={2}>
                         <Typography variant="body2">
-                            Don't have an account?{' '}
-                            <Link component={RouterLink} to="/register" variant="body2" color="secondary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
-                                Sign Up
+                            Already have an account?{' '}
+                            <Link component={RouterLink} to="/login" variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                                Log In
                             </Link>
                         </Typography>
                     </Box>
@@ -176,4 +193,4 @@ function Login({ onLogin }) {
     );
 }
 
-export default Login;
+export default Signup;

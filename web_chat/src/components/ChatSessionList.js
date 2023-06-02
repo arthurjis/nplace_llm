@@ -2,11 +2,9 @@ import ChatSessionItem from './ChatSessionItem';
 
 import React, { useState, useEffect, useCallback } from 'react';
 
-// Updated props, added refreshChatSessionsSignal
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
   const [chatSessions, setChatSessions] = useState([]);
 
- // Define fetchChatSessions using useCallback
 const fetchChatSessions = useCallback(() => {
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
       headers: {
@@ -22,7 +20,7 @@ const fetchChatSessions = useCallback(() => {
     .catch((error) => {
       console.error('Error:', error);
     });
-  }, [token]); // token is the only dependency
+  }, [token]);
   
   useEffect(() => {
     fetchChatSessions();
