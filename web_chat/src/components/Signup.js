@@ -8,6 +8,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
+
 function Signup({ onLogin }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -149,17 +150,19 @@ function Signup({ onLogin }) {
                                 helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                             />
                             {passwordTouched && !passwordError && (
-                                <OutlinedInput
-                                    notched
-                                    readOnly
-                                    fullWidth
-                                    value={
-                                        "Your password must contain:\n" +
-                                        " •  At least 8 characters"
-                                    }
-                                    multiline
-                                    style={{ fontSize: 14, lineHeight: 2, height: "78px", borderRadius: 2 }}
-                                />
+                                <Box pt={1.5}>
+                                    <OutlinedInput
+                                        notched
+                                        readOnly
+                                        fullWidth
+                                        value={
+                                            "Your password must contain:\n" +
+                                            " •  At least 8 characters"
+                                        }
+                                        multiline
+                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: 2 }}
+                                    />
+                                </Box>
                             )}
                         </>
                     )}
@@ -189,4 +192,3 @@ function Signup({ onLogin }) {
 }
 
 export default Signup;
-
