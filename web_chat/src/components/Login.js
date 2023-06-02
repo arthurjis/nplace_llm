@@ -118,7 +118,7 @@ function Login({ onLogin }) {
                                 autoComplete="current-password"
                                 onChange={(e) => {
                                     setPassword(e.target.value);
-                                    if (e.target.value == '') {
+                                    if (e.target.value === '') {
                                         setLoginError(false);
                                     }
                                 }}
