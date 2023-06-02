@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core/styles';
 import socketIOClient from 'socket.io-client';
 import SocketContext from './contexts/SocketContext';
@@ -8,6 +8,7 @@ import ChatSessionList from './components/ChatSessionList';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import theme from './utils/ThemeUtils';
+import RedirectWithLang from './utils/RedirectWithLang';
 import './App.css';
 
 
@@ -91,10 +92,13 @@ function App() {
         <SocketContext.Provider value={socket}>
           <div className="App">
             <Routes>
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/register" element={<Signup onLogin={handleLogin} />} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/:lang/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/:lang/register" element={<Signup onLogin={handleLogin} />} />
+              <Route path="/login" element={<RedirectWithLang to="/login" />} />
+              <Route path="/register" element={<RedirectWithLang to="/register" />} />
+              <Route path="/" element={<RedirectWithLang to="/login" />} />
             </Routes>
+
           </div>
         </SocketContext.Provider>
       </Router>

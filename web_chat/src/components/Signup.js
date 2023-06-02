@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
 import Visibility from '@material-ui/icons/Visibility';
@@ -20,7 +20,10 @@ function Signup({ onLogin }) {
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const { t } = useTranslation();
+    const { lang } = useParams();
+    const validLanguages = ['en', 'zh'];
+    const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
+    const { t, i18n } = useTranslation();
 
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
@@ -62,6 +65,11 @@ function Signup({ onLogin }) {
             }
         }
     };
+
+    // Change language based on the URL parameter
+    useEffect(() => {
+        i18n.changeLanguage(language);
+    }, [language, i18n]);
 
     return (
         <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
@@ -187,7 +195,7 @@ function Signup({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             {t('signup.alreadyHaveAccount')}{' '}
-                            <Link component={RouterLink} to="/login" variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
                                 {t('signup.logIn')}
                             </Link>
                         </Typography>
