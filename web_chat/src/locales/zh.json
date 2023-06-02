@@ -1,0 +1,27 @@
+{
+    "login": {
+      "welcomeBack": "欢迎回来",
+      "enterYourPassword": "输入您的密码",
+      "emailAddress": "邮箱地址",
+      "password": "密码",
+      "forgotPassword": "忘记密码？",
+      "continue": "继续",
+      "dontHaveAccount": "没有帐户？",
+      "signUp": "注册",
+      "emailError": "邮箱格式不正确",
+      "loginError": "邮箱或密码不正确"
+    },
+    "signup": {
+      "createYourAccount": "创建您的帐户",
+      "emailAddress": "邮箱地址",
+      "password": "密码",
+      "passwordRules": "您的密码必须包含：\n • 至少8个字符",
+      "continue": "继续",
+      "alreadyHaveAccount": "已经有账户了？",
+      "logIn": "登录",
+      "emailError": "邮箱格式不正确",
+      "passwordError": "密码必须包含至少八个字符",
+      "accountExistError": "邮箱已注册"
+    }
+  }
+  

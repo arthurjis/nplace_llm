@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { useTranslation } from 'react-i18next';
 
 
 function Signup({ onLogin }) {
@@ -19,6 +20,10 @@ function Signup({ onLogin }) {
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    const { lang } = useParams();
+    const validLanguages = ['en', 'zh'];
+    const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
+    const { t, i18n } = useTranslation();
 
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
@@ -35,14 +40,14 @@ function Signup({ onLogin }) {
         event.preventDefault();
         if (step === 1) {
             if (!isValidEmail(email)) {
-                setEmailError('Email is not valid.');
+                setEmailError(t('signup.emailError'));
             } else {
                 setEmailError(null);
                 setStep(2);
             }
         } else {
             if (password.length < 8) {
-                setPasswordError('Password must be at least 8 characters long.');
+                setPasswordError(t('signup.passwordError'));
                 return;
             }
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -53,7 +58,7 @@ function Signup({ onLogin }) {
 
             } catch (error) {
                 if (error.response.data.msg === 'User already exists') {
-                    setAccountExistError('The user already exists.');
+                    setAccountExistError(t('signup.accountExistError'));
                 } else {
                     console.error(error);
                 }
@@ -61,13 +66,18 @@ function Signup({ onLogin }) {
         }
     };
 
+    // Change language based on the URL parameter
+    useEffect(() => {
+        i18n.changeLanguage(language);
+    }, [language, i18n]);
+
     return (
-        <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+        <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '90vh' }}>
             <div style={{ width: '320px' }}>
                 <form onSubmit={handleContinue}>
                     <Box pt={2} pb={2}>
                         <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold', fontSize: '32px' }}>
-                            Create your account
+                            {t('signup.createYourAccount')}
                         </Typography>
                     </Box>
                     {step === 1 ? (
@@ -77,10 +87,13 @@ function Signup({ onLogin }) {
                                 margin="none"
                                 fullWidth
                                 required
-                                label="Email Address"
+                                label={t('signup.emailAddress')}
                                 autoFocus
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setAccountExistError(false);
+                                }}
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
@@ -94,7 +107,7 @@ function Signup({ onLogin }) {
                                 variant="outlined"
                                 margin="none"
                                 fullWidth
-                                label="Email Address"
+                                label={t('signup.emailAddress')}
                                 value={email}
                                 disabled
                                 autoComplete="username"
@@ -107,7 +120,6 @@ function Signup({ onLogin }) {
                                                     setPassword("");
                                                     setEmailError(false);
                                                     setPasswordError(false);
-                                                    setAccountExistError(false);
                                                     setPasswordTouched(false);
                                                 }}
                                                 style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
@@ -125,12 +137,15 @@ function Signup({ onLogin }) {
                                 margin="normal"
                                 required
                                 fullWidth
-                                label="Password"
+                                label={t('signup.password')}
                                 value={password}
                                 autoComplete="new-password"
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     setPasswordTouched(true);
+                                    if (e.target.value.length === 8) {
+                                        setPasswordError(false);
+                                    }
                                 }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
@@ -149,17 +164,15 @@ function Signup({ onLogin }) {
 
                                 }}
                                 error={!!passwordError}
-                                helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                             />
-                            {passwordTouched && !passwordError && (
+                            {passwordTouched && (
                                 <Box pt={1.5}>
                                     <OutlinedInput
                                         notched
                                         readOnly
                                         fullWidth
                                         value={
-                                            "Your password must contain:\n" +
-                                            " •  At least 8 characters"
+                                            t('signup.passwordRules')
                                         }
                                         multiline
                                         style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: 2 }}
@@ -176,14 +189,14 @@ function Signup({ onLogin }) {
                             color="primary"
                             style={{ height: "52px", borderRadius: 2, textTransform: 'none', fontSize: '16px' }}
                         >
-                            Continue
+                            {t('signup.continue')}
                         </Button>
                     </Box>
                     <Box pt={2}>
                         <Typography variant="body2">
-                            Already have an account?{' '}
-                            <Link component={RouterLink} to="/login" variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
-                                Log In
+                            {t('signup.alreadyHaveAccount')}{' '}
+                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                                {t('signup.logIn')}
                             </Link>
                         </Typography>
                     </Box>
