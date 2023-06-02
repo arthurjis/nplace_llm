@@ -26,9 +26,9 @@ function Login({ onLogin }) {
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-      <Grid item xs={12} sm={4} md={3}> 
+      <div style={{ width: '320px' }}>
         <form onSubmit={handleContinue}>
-          <Typography variant="h5" component="h2" gutterBottom>
+          <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold' }}>
             {step === 1 ? 'Welcome back' : 'Enter your password'}
           </Typography>
           {step === 1 ? (
@@ -41,6 +41,9 @@ function Login({ onLogin }) {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              InputProps={{
+                style: { height: "52px", borderRadius: 2 }
+              }}
             />
           ) : (
             <>
@@ -54,7 +57,7 @@ function Login({ onLogin }) {
                 InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={() => setStep(1)}>
+                        <IconButton onClick={() => setStep(1)} style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
                           <EditIcon />
                         </IconButton>
                       </InputAdornment>
@@ -73,27 +76,32 @@ function Login({ onLogin }) {
               />
             </>
           )}
+
+          {step === 2 && (
+            // TODO implement forgot password
+            <Link component={RouterLink} to="/register" color="secondary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+              Forgot password?
+            </Link>
+          )}
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            style={{ height: "52px", borderRadius: 2 }}
           >
             Continue
           </Button>
-          {step === 2 && (
-            <Link component={Button} color="secondary">
-              Forgot password?
-            </Link>
-          )}
+
           <Typography variant="body2">
             Don't have an account?{' '}
-            <Link component={RouterLink} to="/register" variant="body2" color="secondary">
+            <Link component={RouterLink} to="/register" variant="body2" color="secondary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
               Sign Up
             </Link>
           </Typography>
         </form>
-      </Grid>
+      </div>
     </Grid>
   );
 }
