@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box } from '@material-ui/core';
+import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
@@ -13,13 +13,15 @@ function Signup({ onLogin }) {
     const [emailError, setEmailError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
     const [accountExistError, setAccountExistError] = useState(null);
+    const [passwordTouched, setPasswordTouched] = useState(false);
+
 
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
-          {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }}/> }
-          {children}
+            {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
+            {children}
         </span>
-      );
+    );
 
     const handleContinue = async (event) => {
         event.preventDefault();
@@ -46,7 +48,7 @@ function Signup({ onLogin }) {
                     setAccountExistError('The user already exists.');
                 } else {
                     console.error(error);
-                }           
+                }
             }
         }
     };
@@ -108,13 +110,29 @@ function Signup({ onLogin }) {
                                 label="Password"
                                 type="password"
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    setPasswordTouched(true);
+                                }}
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
                                 error={!!passwordError}
                                 helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                             />
+                            {passwordTouched && !passwordError && (
+                                <OutlinedInput
+                                    notched
+                                    readOnly
+                                    fullWidth
+                                    value={
+                                        "Your password must contain:\n" +
+                                        " •  At least 8 characters"
+                                    }
+                                    multiline
+                                    style={{ fontSize: 14, lineHeight: 2, height: "78px", borderRadius: 2 }}
+                                />
+                            )}
                         </>
                     )}
                     <Box pt={4}>
