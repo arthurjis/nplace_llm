@@ -72,7 +72,7 @@ function Signup({ onLogin }) {
     }, [language, i18n]);
 
     return (
-        <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+        <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '90vh' }}>
             <div style={{ width: '320px' }}>
                 <form onSubmit={handleContinue}>
                     <Box pt={2} pb={2}>
