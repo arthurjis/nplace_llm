@@ -102,7 +102,7 @@ function Signup({ onLogin }) {
                             />
                             <TextField
                                 variant="outlined"
-                                margin="none"
+                                margin="normal"
                                 required
                                 fullWidth
                                 label="Password"
