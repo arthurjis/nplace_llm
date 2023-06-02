@@ -92,7 +92,14 @@ function Login({ onLogin }) {
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
-                                            <IconButton onClick={() => setStep(1)} style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
+                                            <IconButton
+                                                onClick={() => {
+                                                    setStep(1);
+                                                    setPassword("");
+                                                    setEmailError(false);
+                                                    setLoginError(false);
+                                                }}
+                                                style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
                                                 <EditIcon />
                                             </IconButton>
                                         </InputAdornment>

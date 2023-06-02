@@ -18,7 +18,7 @@ function Signup({ onLogin }) {
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    
+
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
             {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
@@ -100,7 +100,14 @@ function Signup({ onLogin }) {
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
-                                                onClick={() => setStep(1)}
+                                                onClick={() => {
+                                                    setStep(1);
+                                                    setPassword("");
+                                                    setEmailError(false);
+                                                    setPasswordError(false);
+                                                    setAccountExistError(false);
+                                                    setPasswordTouched(false);
+                                                }}
                                                 style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
                                                 <EditIcon />
                                             </IconButton>
@@ -156,7 +163,7 @@ function Signup({ onLogin }) {
                             )}
                         </>
                     )}
-                    <Box pt={4}>
+                    <Box pt={3}>
                         <Button
                             type="submit"
                             fullWidth
