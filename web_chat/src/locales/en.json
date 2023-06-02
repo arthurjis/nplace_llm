@@ -7,7 +7,9 @@
       "forgotPassword": "Forgot password?",
       "continue": "Continue",
       "dontHaveAccount": "Don't have an account?",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "emailError": "Email is not valid.",
+      "loginError": "Wrong email or password."
     },
     "signup": {
       "createYourAccount": "Create your account",
@@ -16,7 +18,10 @@
       "passwordRules": "Your password must contain:\n • At least 8 characters",
       "continue": "Continue",
       "alreadyHaveAccount": "Already have an account?",
-      "logIn": "Log in"
+      "logIn": "Log in",
+      "emailError": "Email is not valid.",
+      "passwordError": "Password must be at least 8 characters long.",
+      "accountExistError": "The user already exists."
     }
   }
   

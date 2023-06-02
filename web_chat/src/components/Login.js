@@ -7,6 +7,7 @@ import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { useTranslation } from 'react-i18next';
 
 
 function Login({ onLogin }) {
@@ -17,6 +18,7 @@ function Login({ onLogin }) {
     const [loginError, setLoginError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
 
+    const { t } = useTranslation();
 
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
@@ -33,7 +35,7 @@ function Login({ onLogin }) {
         event.preventDefault();
         if (step === 1) {
             if (!isValidEmail(email)) {
-                setEmailError('Email is not valid.');
+                setEmailError(t('login.emailError'));
             } else {
                 setEmailError(null);
                 setStep(2);
@@ -45,7 +47,7 @@ function Login({ onLogin }) {
                 onLogin(response.data.access_token);
             } catch (error) {
                 if (error.response.data.msg === 'Bad id or passcode') {
-                    setLoginError('Wrong email or password.');
+                    setLoginError(t('login.loginError'));
                 } else {
                     console.error(error);
                 }
@@ -59,7 +61,7 @@ function Login({ onLogin }) {
                 <form onSubmit={handleContinue}>
                     <Box pt={2} pb={2}>
                         <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold', fontSize: '32px' }}>
-                            {step === 1 ? 'Welcome back' : 'Enter your password'}
+                            {step === 1 ? t('login.welcomeBack') : t('login.enterYourPassword')}
                         </Typography>
                     </Box>
                     {step === 1 ? (
@@ -69,7 +71,7 @@ function Login({ onLogin }) {
                                 margin="none"
                                 fullWidth
                                 required
-                                label="Email Address"
+                                label={t('login.emailAddress')}
                                 autoFocus
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -86,7 +88,7 @@ function Login({ onLogin }) {
                                 variant="outlined"
                                 margin="none"
                                 fullWidth
-                                label="Email Address"
+                                label={t('login.emailAddress')}
                                 value={email}
                                 disabled
                                 autoComplete="username"
@@ -113,7 +115,7 @@ function Login({ onLogin }) {
                                 margin="normal"
                                 required
                                 fullWidth
-                                label="Password"
+                                label={t('login.password')}
                                 value={password}
                                 autoComplete="current-password"
                                 onChange={(e) => {
@@ -147,7 +149,7 @@ function Login({ onLogin }) {
                         // TODO implement forgot password
                         <Box pt={0.6}>
                             <Link component={RouterLink} to="/register" color="primary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
-                                Forgot password?
+                                {t('login.forgotPassword')}
                             </Link>
                         </Box>
                     )}
@@ -159,14 +161,14 @@ function Login({ onLogin }) {
                             color="primary"
                             style={{ height: "52px", borderRadius: 2, textTransform: 'none', fontSize: '16px' }}
                         >
-                            Continue
+                            {t('login.continue')}
                         </Button>
                     </Box>
                     <Box pt={2}>
                         <Typography variant="body2">
-                            Don't have an account?{' '}
+                            {t('login.dontHaveAccount')}{' '}
                             <Link component={RouterLink} to="/register" variant="body2" color="secondary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
-                                Sign Up
+                                {t('login.signUp')}
                             </Link>
                         </Typography>
                     </Box>
