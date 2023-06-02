@@ -12,6 +12,7 @@ function Signup({ onLogin }) {
     const [step, setStep] = useState(1);
     const [emailError, setEmailError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
+    const [accountExistError, setAccountExistError] = useState(null);
 
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
@@ -24,14 +25,14 @@ function Signup({ onLogin }) {
         event.preventDefault();
         if (step === 1) {
             if (!isValidEmail(email)) {
-                setEmailError('Email is not valid');
+                setEmailError('Email is not valid.');
             } else {
                 setEmailError(null);
                 setStep(2);
             }
         } else {
             if (password.length < 8) {
-                setPasswordError('Password must be at least 8 characters long');
+                setPasswordError('Password must be at least 8 characters long.');
                 return;
             }
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -41,7 +42,11 @@ function Signup({ onLogin }) {
                 onLogin(loginResponse.data.access_token);
 
             } catch (error) {
-                console.error(error);
+                if (error.response.data.msg === 'User already exists') {
+                    setAccountExistError('The user already exists.');
+                } else {
+                    console.error(error);
+                }           
             }
         }
     };
@@ -92,6 +97,8 @@ function Signup({ onLogin }) {
                                     ),
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
+                                error={!!accountExistError}
+                                helperText={<HelperText error={!!accountExistError}>{accountExistError}</HelperText>}
                             />
                             <TextField
                                 variant="outlined"

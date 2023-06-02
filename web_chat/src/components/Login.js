@@ -26,7 +26,7 @@ function Login({ onLogin }) {
         event.preventDefault();
         if (step === 1) {
             if (!isValidEmail(email)) {
-                setEmailError('Email is not valid');
+                setEmailError('Email is not valid.');
             } else {
                 setEmailError(null);
                 setStep(2);
@@ -38,7 +38,7 @@ function Login({ onLogin }) {
                 onLogin(response.data.access_token);
             } catch (error) {
                 if (error.response.data.msg === 'Bad id or passcode') {
-                    setLoginError('Wrong email or password');
+                    setLoginError('Wrong email or password.');
                 } else {
                     console.error(error);
                 }
