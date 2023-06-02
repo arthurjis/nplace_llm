@@ -89,6 +89,7 @@ function Login({ onLogin }) {
                                 label="Email Address"
                                 value={email}
                                 disabled
+                                autoComplete="username"
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -114,6 +115,7 @@ function Login({ onLogin }) {
                                 fullWidth
                                 label="Password"
                                 value={password}
+                                autoComplete="current-password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
