@@ -116,7 +116,12 @@ function Login({ onLogin }) {
                                 label="Password"
                                 value={password}
                                 autoComplete="current-password"
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    if (e.target.value == '') {
+                                        setLoginError(false);
+                                    }
+                                }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 },
@@ -141,7 +146,7 @@ function Login({ onLogin }) {
                     {step === 2 && (
                         // TODO implement forgot password
                         <Box pt={0.6}>
-                            <Link component={RouterLink} to="/register" color="secondary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                            <Link component={RouterLink} to="/register" color="primary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
                                 Forgot password?
                             </Link>
                         </Box>

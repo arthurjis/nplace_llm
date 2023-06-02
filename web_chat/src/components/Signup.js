@@ -182,7 +182,7 @@ function Signup({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             Already have an account?{' '}
-                            <Link component={RouterLink} to="/login" variant="body2" color="secondary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                            <Link component={RouterLink} to="/login" variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
                                 Log In
                             </Link>
                         </Typography>
