@@ -5,6 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 function Signup({ onLogin }) {
     const [email, setEmail] = useState('');
@@ -14,14 +16,19 @@ function Signup({ onLogin }) {
     const [passwordError, setPasswordError] = useState(null);
     const [accountExistError, setAccountExistError] = useState(null);
     const [passwordTouched, setPasswordTouched] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-
+    
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
             {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
             {children}
         </span>
     );
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleContinue = async (event) => {
         event.preventDefault();
@@ -92,7 +99,9 @@ function Signup({ onLogin }) {
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
-                                            <IconButton onClick={() => setStep(1)} style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
+                                            <IconButton
+                                                onClick={() => setStep(1)}
+                                                style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}>
                                                 <EditIcon />
                                             </IconButton>
                                         </InputAdornment>
@@ -108,14 +117,26 @@ function Signup({ onLogin }) {
                                 required
                                 fullWidth
                                 label="Password"
-                                type="password"
                                 value={password}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     setPasswordTouched(true);
                                 }}
+                                type={showPassword ? 'text' : 'password'}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: 2 },
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={handleClickShowPassword}
+                                                style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}
+                                                disableRipple
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+
                                 }}
                                 error={!!passwordError}
                                 helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}

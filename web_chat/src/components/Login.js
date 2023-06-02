@@ -5,6 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 
 function Login({ onLogin }) {
@@ -13,6 +15,7 @@ function Login({ onLogin }) {
     const [step, setStep] = useState(1);
     const [emailError, setEmailError] = useState(null);
     const [loginError, setLoginError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
 
     const HelperText = ({ error, children }) => (
@@ -21,6 +24,10 @@ function Login({ onLogin }) {
             {children}
         </span>
     );
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleContinue = async (event) => {
         event.preventDefault();
@@ -99,11 +106,23 @@ function Login({ onLogin }) {
                                 required
                                 fullWidth
                                 label="Password"
-                                type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                type={showPassword ? 'text' : 'password'}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: 2 },
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={handleClickShowPassword}
+                                                style={{ backgroundColor: 'transparent', position: 'relative', right: '-10px' }}
+                                                disableRipple
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+
                                 }}
                                 error={!!loginError}
                                 helperText={<HelperText error={!!loginError}>{loginError}</HelperText>}
@@ -112,13 +131,13 @@ function Login({ onLogin }) {
                     )}
                     {step === 2 && (
                         // TODO implement forgot password
-                        <Box pt={2}>
+                        <Box pt={0.6}>
                             <Link component={RouterLink} to="/register" color="secondary" variant="body2" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
                                 Forgot password?
                             </Link>
                         </Box>
                     )}
-                    <Box pt={4}>
+                    <Box pt={3}>
                         <Button
                             type="submit"
                             fullWidth
