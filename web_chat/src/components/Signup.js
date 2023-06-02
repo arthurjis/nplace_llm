@@ -13,6 +13,12 @@ function Signup({ onLogin }) {
     const [emailError, setEmailError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
 
+    const HelperText = ({ error, children }) => (
+        <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
+          {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }}/> }
+          {children}
+        </span>
+      );
 
     const handleContinue = async (event) => {
         event.preventDefault();
@@ -52,7 +58,6 @@ function Signup({ onLogin }) {
                     {step === 1 ? (
                         <>
                             <TextField
-                                error={!!emailError}
                                 variant="outlined"
                                 margin="none"
                                 fullWidth
@@ -64,12 +69,14 @@ function Signup({ onLogin }) {
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
+                                error={!!emailError}
+                                helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
                             />
-                            {emailError &&
+                            {/* {emailError &&
                                 <FormHelperText error style={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}>
                                     <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} /> {emailError}
                                 </FormHelperText>
-                            }
+                            } */}
                         </>
                     ) : (
                         <>
@@ -104,14 +111,7 @@ function Signup({ onLogin }) {
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
                                 error={!!passwordError}
-                                helperText={
-                                    passwordError && (
-                                      <FormHelperText error style={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}>
-                                        <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '4px' }}/> 
-                                        {passwordError}
-                                      </FormHelperText>
-                                    )
-                                  }
+                                helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                             />
                         </>
                     )}
