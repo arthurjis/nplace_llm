@@ -1,15 +1,24 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import enTranslations from './locales/en.json';
+import zhTranslations from './locales/zh.json';
 
 i18n
-  .use(LanguageDetector) // Detects user language
-  .use(initReactI18next) // Passes i18n down to react-i18next
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
-    resources: {}, // We'll initialize this with our translation files later
-    fallbackLng: "en", // Use English if the detected language is not available
+    resources: {
+      en: {
+        translation: enTranslations
+      },
+      zh: {
+        translation: zhTranslations
+      }
+    },
+    fallbackLng: "en",
     interpolation: {
-      escapeValue: false // React already does escaping
+      escapeValue: false
     }
   });
 

@@ -1,0 +1,22 @@
+{
+    "login": {
+      "welcomeBack": "Welcome back",
+      "enterYourPassword": "Enter your password",
+      "emailAddress": "Email Address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "continue": "Continue",
+      "dontHaveAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signup": {
+      "createYourAccount": "Create your account",
+      "emailAddress": "Email Address",
+      "password": "Password",
+      "passwordRules": "Your password must contain:\n • At least 8 characters",
+      "continue": "Continue",
+      "alreadyHaveAccount": "Already have an account?",
+      "logIn": "Log in"
+    }
+  }
+  
