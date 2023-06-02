@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box } from '@material-ui/core';
+import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, FormHelperText } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink } from 'react-router-dom';
+import { isValidEmail } from '../utils/EmailUtils';
+import ErrorIcon from '@mui/icons-material/Error';
+
 
 function Login({ onLogin }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [step, setStep] = useState(1);
+    const [emailError, setEmailError] = useState(null);
+
 
     const handleContinue = async (event) => {
         event.preventDefault();
         if (step === 1) {
-            setStep(2);
+            if (!isValidEmail(email)) {
+                setEmailError('Email is not valid');
+            } else {
+                setEmailError(null);
+                setStep(2);
+            }
         } else {
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
             try {
@@ -28,7 +38,7 @@ function Login({ onLogin }) {
         <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
             <div style={{ width: '320px' }}>
                 <form onSubmit={handleContinue}>
-                    <Box pt={2}>
+                    <Box pt={2} pb={2}>
                         <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold', fontSize: '32px' }}>
                             {step === 1 ? 'Welcome back' : 'Enter your password'}
                         </Typography>
@@ -36,10 +46,11 @@ function Login({ onLogin }) {
                     {step === 1 ? (
                         <>
                             <TextField
+                                error={!!emailError}
                                 variant="outlined"
-                                margin="normal"
-                                required
+                                margin="none"
                                 fullWidth
+                                required
                                 label="Email Address"
                                 autoFocus
                                 value={email}
@@ -48,12 +59,17 @@ function Login({ onLogin }) {
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
                             />
+                            {emailError &&
+                                <FormHelperText error style={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}>
+                                    <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} /> {emailError}
+                                </FormHelperText>
+                            }
                         </>
                     ) : (
                         <>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
+                                margin="none"
                                 fullWidth
                                 label="Email Address"
                                 value={email}
@@ -92,7 +108,7 @@ function Login({ onLogin }) {
                             </Link>
                         </Box>
                     )}
-                    <Box pt={2}>
+                    <Box pt={4}>
                         <Button
                             type="submit"
                             fullWidth
