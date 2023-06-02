@@ -28,9 +28,9 @@ function Signup({ onLogin }) {
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-      <Grid item xs={12} sm={4} md={3}> 
+      <div style={{ width: '300px' }}>
         <form onSubmit={handleContinue}>
-          <Typography variant="h5" component="h2" gutterBottom>
+          <Typography variant="h5" component="h2" gutterBottom style={{ fontWeight: 'bold' }}>
             Create your account
           </Typography>
           {step === 1 ? (
@@ -56,7 +56,7 @@ function Signup({ onLogin }) {
                 InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={() => setStep(1)}>
+                        <IconButton onClick={() => setStep(1)} style={{ backgroundColor: 'transparent' }}>
                           <EditIcon />
                         </IconButton>
                       </InputAdornment>
@@ -80,6 +80,7 @@ function Signup({ onLogin }) {
             fullWidth
             variant="contained"
             color="primary"
+            style={{ height: "52px", borderRadius: 2 }}
           >
             Continue
           </Button>
@@ -90,7 +91,7 @@ function Signup({ onLogin }) {
             </Link>
           </Typography>
         </form>
-      </Grid>
+      </div>
     </Grid>
   );
 }
