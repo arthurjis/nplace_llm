@@ -72,11 +72,6 @@ function Signup({ onLogin }) {
                                 error={!!emailError}
                                 helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
                             />
-                            {/* {emailError &&
-                                <FormHelperText error style={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}>
-                                    <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} /> {emailError}
-                                </FormHelperText>
-                            } */}
                         </>
                     ) : (
                         <>

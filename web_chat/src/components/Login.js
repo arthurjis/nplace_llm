@@ -12,7 +12,15 @@ function Login({ onLogin }) {
     const [password, setPassword] = useState('');
     const [step, setStep] = useState(1);
     const [emailError, setEmailError] = useState(null);
+    const [loginError, setLoginError] = useState(null);
 
+
+    const HelperText = ({ error, children }) => (
+        <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
+            {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
+            {children}
+        </span>
+    );
 
     const handleContinue = async (event) => {
         event.preventDefault();
@@ -29,7 +37,11 @@ function Login({ onLogin }) {
                 const response = await axios.post(`${SERVER_URL}/login`, { email, password });
                 onLogin(response.data.access_token);
             } catch (error) {
-                console.error(error);
+                if (error.response.data.msg === 'Bad id or passcode') {
+                    setLoginError('Wrong email or password');
+                } else {
+                    console.error(error);
+                }
             }
         }
     };
@@ -46,7 +58,6 @@ function Login({ onLogin }) {
                     {step === 1 ? (
                         <>
                             <TextField
-                                error={!!emailError}
                                 variant="outlined"
                                 margin="none"
                                 fullWidth
@@ -58,12 +69,9 @@ function Login({ onLogin }) {
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
+                                error={!!emailError}
+                                helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
                             />
-                            {emailError &&
-                                <FormHelperText error style={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}>
-                                    <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} /> {emailError}
-                                </FormHelperText>
-                            }
                         </>
                     ) : (
                         <>
@@ -97,6 +105,8 @@ function Login({ onLogin }) {
                                 InputProps={{
                                     style: { height: "52px", borderRadius: 2 }
                                 }}
+                                error={!!loginError}
+                                helperText={<HelperText error={!!loginError}>{loginError}</HelperText>}
                             />
                         </>
                     )}
