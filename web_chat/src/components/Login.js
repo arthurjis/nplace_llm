@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
 import Visibility from '@material-ui/icons/Visibility';
@@ -18,6 +18,7 @@ function Login({ onLogin }) {
     const [loginError, setLoginError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
 
+    const navigate = useNavigate();
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
@@ -48,6 +49,7 @@ function Login({ onLogin }) {
             try {
                 const response = await axios.post(`${SERVER_URL}/login`, { email, password });
                 onLogin(response.data.access_token);
+                navigate('/chat');
             } catch (error) {
                 if (error.response.data.msg === 'Bad id or passcode') {
                     setLoginError(t('login.loginError'));
@@ -125,6 +127,7 @@ function Login({ onLogin }) {
                                 fullWidth
                                 label={t('login.password')}
                                 value={password}
+                                autoFocus
                                 autoComplete="current-password"
                                 onChange={(e) => {
                                     setPassword(e.target.value);
