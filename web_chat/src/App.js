@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/system';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import theme from './utils/ThemeUtils';

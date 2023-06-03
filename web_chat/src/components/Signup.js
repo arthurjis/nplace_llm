@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
+import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTranslation } from 'react-i18next';
 
 
