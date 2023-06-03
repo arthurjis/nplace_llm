@@ -29,7 +29,7 @@ function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatS
     else {
       setMessages([]);
     }
-  }, [selectedChatSession]);
+  }, [selectedChatSession, token]);
 
   useEffect(() => {
     // Listen for new messages from the server
