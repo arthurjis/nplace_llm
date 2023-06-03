@@ -137,6 +137,7 @@ function Signup({ onLogin }) {
                                 margin="normal"
                                 required
                                 fullWidth
+                                autoFocus
                                 label={t('signup.password')}
                                 value={password}
                                 autoComplete="new-password"

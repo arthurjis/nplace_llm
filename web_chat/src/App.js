@@ -89,18 +89,15 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <SocketContext.Provider value={socket}>
-          <div className="App">
-            <Routes>
-              <Route path="/:lang/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/:lang/register" element={<Signup onLogin={handleLogin} />} />
-              <Route path="/login" element={<RedirectWithLang to="/login" />} />
-              <Route path="/register" element={<RedirectWithLang to="/register" />} />
-              <Route path="/" element={<RedirectWithLang to="/login" />} />
-            </Routes>
-
-          </div>
-        </SocketContext.Provider>
+        <div className="App">
+          <Routes>
+            <Route path="/:lang/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/:lang/register" element={<Signup onLogin={handleLogin} />} />
+            <Route path="/login" element={<RedirectWithLang to="/login" />} />
+            <Route path="/register" element={<RedirectWithLang to="/register" />} />
+            <Route path="/" element={<RedirectWithLang to="/login" />} />
+          </Routes>
+        </div>
       </Router>
     </ThemeProvider>
   );

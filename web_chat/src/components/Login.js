@@ -125,6 +125,7 @@ function Login({ onLogin }) {
                                 fullWidth
                                 label={t('login.password')}
                                 value={password}
+                                autoFocus
                                 autoComplete="current-password"
                                 onChange={(e) => {
                                     setPassword(e.target.value);
