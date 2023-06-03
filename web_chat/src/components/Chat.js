@@ -5,7 +5,7 @@ import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 
 
-function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
+function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -15,7 +15,7 @@ function Chat({ selectedChatSession, setSelectedChatSession, refreshChatSessions
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       })
         .then(response => response.json())
