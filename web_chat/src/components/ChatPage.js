@@ -5,7 +5,6 @@ import Chat from './Chat';
 import SidePanel from './SidePanel';
 import SocketContext from '../contexts/SocketContext';
 import { Box, Drawer, Hidden } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -18,27 +17,6 @@ const ChatPage = ({ token, onLogout }) => {
     const [selectedChatSession, setSelectedChatSession] = useState(null);
     const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
     const navigate = useNavigate();
-    const theme = useTheme();
-    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-    const [sidePanelOpen, setMobileOpen] = React.useState(false);
-    const [width, setWidth] = React.useState(window.innerWidth);
-    React.useEffect(() => {
-        const handleResize = () => {
-            setWidth(window.innerWidth);
-        };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const isLargeScreen = width >= 1000;
-    // console.log(width + "    " + isLargeScreen);
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!sidePanelOpen);
-        console.log("SidePanelOpen " + !sidePanelOpen);
-
-    };
-
 
     // useEffect(() => {
     //     if (!token) {
@@ -87,6 +65,30 @@ const ChatPage = ({ token, onLogout }) => {
     }, [socket]);
 
 
+    // UI-related
+    const [sidePanelOpen, setSidePanelOpen] = React.useState(false);
+    const [width, setWidth] = React.useState(window.innerWidth);
+    const [buttonClicked, setButtonClicked] = React.useState(false);
+    const minChatPanelWidth = 320;    // in px
+    const maxChatPanelWidth = 650;    // in px
+    const sidePanelWidth = 260;       // in px
+    const marginBetweenPanels = 30;   // in px
+    const panelHeightPercentage = 90; // in %
+    const isLargeScreen = width >= maxChatPanelWidth + sidePanelWidth + marginBetweenPanels;
+    const handleDrawerToggle = () => {
+        setSidePanelOpen(!sidePanelOpen);
+        setButtonClicked(true);
+        console.debug("SidePanelOpen " + !sidePanelOpen);
+        setTimeout(() => setButtonClicked(false), 500);
+    };
+    useEffect(() => {
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
 
     return (
         // <SocketContext.Provider value={socket}>
@@ -97,91 +99,63 @@ const ChatPage = ({ token, onLogout }) => {
                 justifyContent: 'center',
                 width: '100vw',
                 height: '98vh',
-                marginLeft: (width >= 650) ? '0pt' : `${(650 - width) / 2 + 1}px`,
+                marginLeft: (width >= minChatPanelWidth) ? '0pt' : `${(minChatPanelWidth - width) / 2 + 1}px`, // In case where viewport width is less than content width and scrollX is enabled, add margin to push content to viewport center
                 position: 'absolute',
             }}
         >
             {/* {socket ? ( */}
             <>
-                {isLargeScreen ? (
-                    <>
-                        <Box // SidePanel Parent Container
-                            sx={(theme) => ({
-                                position: 'absolute',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                height: '80%',
-                                width: theme.sizes.sidePanelWidth,
-                                backgroundColor: 'transparent',
-                                paddingRight: sidePanelOpen ? '680px' : '350px',
-                                transition: 'padding 0.5s ease',
-                                zIndex: 1,
-                                border: 1,
-                                borderColor: '#AA1231',
-                                borderStyle: 'dashed',
-                            })}
-                        >
-                            <Box // SidePanel
-                                sx={{
-                                    backgroundColor: 'gray',
-                                    height: '100%',
-                                    width: '100%',
-                                }}
-                            >
-
-                            </Box>
-                        </Box>
-                    </>
-                ) : (
-                    <>
-                        <Box // SidePanel Parent Container
-                            sx={{
-                                position: 'absolute',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                height: '80%',
-                                width: '300px',
-                                backgroundColor: 'transparent',
-                                transition: 'left 0.5s ease',
-                                left: sidePanelOpen ? `${(width - 650) / 2}px` : `${(width - 650) / 2 - 300}px`,
-                                zIndex: 3,
-                                // border: 1,
-                                // borderColor: '#AA1231',
-                                // borderStyle: 'dashed',
-                            }}
-                        >
-                            <Box // SidePanel
-                                sx={{
-                                    backgroundColor: 'gray',
-                                    height: '100%',
-                                    width: '100%',
-                                }}
-                            >
-
-                            </Box>
-                        </Box>
-                    </>
-                )
-                }
-
-
-
+                <Box // SidePanel Parent Container, viewport wide enough to place two panels side by side
+                    sx={{
+                        position: 'absolute',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: `${panelHeightPercentage}%`,
+                        width: `${sidePanelWidth}px`,
+                        backgroundColor: 'transparent',
+                        paddingRight: isLargeScreen
+                            ? `${sidePanelOpen ? maxChatPanelWidth + marginBetweenPanels : maxChatPanelWidth - sidePanelWidth}px`
+                            : undefined,
+                        left: isLargeScreen
+                            ? undefined
+                            : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth}px`,
+                        transition: buttonClicked // Only transition if button was clicked
+                            ? isLargeScreen
+                                ? 'padding 0.5s ease'
+                                : 'left 0.5s ease'
+                            : undefined,
+                        zIndex: isLargeScreen ? 1 : 3,
+                    }}
+                >
+                    <Box // SidePanel
+                        sx={{
+                            backgroundColor: 'gray',
+                            height: '100%',
+                            width: '100%',
+                        }}
+                    >
+                                 {/* <SidePanel
+                                         token={token}
+                                         onChatSessionSelect={handleChatSessionSelect}
+                                         refreshChatSessionsSignal={refreshChatSessionsSignal}
+                                         onLogout={handleLogout}
+                                     /> */}
+                    </Box>
+                </Box>
                 <Box // ChatPanel Parent Container
                     sx={{
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        height: '80%',
+                        height: `${panelHeightPercentage}%`,
                         width: '100%',
-                        maxWidth: '650px',
-                        minWidth: '650px',
+                        maxWidth: `${maxChatPanelWidth}px`,
+                        minWidth: `${minChatPanelWidth}px`,
                         backgroundColor: 'transparent',
-                        paddingLeft: (sidePanelOpen && isLargeScreen) ? '330px' : '0px',
+                        paddingLeft: (sidePanelOpen && isLargeScreen) ? `${sidePanelWidth + marginBetweenPanels}px` : '0px',
                         transition: 'padding 0.5s ease',
                         zIndex: 2,
                         // border: 2,
@@ -192,7 +166,7 @@ const ChatPage = ({ token, onLogout }) => {
                 >
                     <Box // ChatPanel
                         sx={{
-                            backgroundColor: 'yellow',
+                            backgroundColor: 'rgba(255, 255, 0, 0.5)',
                             height: '100%',
                             width: '100%',
                         }}
@@ -217,13 +191,14 @@ const ChatPage = ({ token, onLogout }) => {
                         right: 20,
                         bgcolor: 'white',
                         borderRadius: '50%',
+                        zIndex: 5
                     }}
                 >
                     <MenuIcon />
                 </IconButton>
             </>
             {/* ) : (<p>Connecting...</p>)} */}
-        </Box>
+        </Box >
         // </SocketContext.Provider>
     );
 };

@@ -10,10 +10,6 @@ const theme = createTheme({
     },
     background: '#f5f5f5'
   },
-  sizes: {
-    sidePanelWidth: '300px',
-    chatPanelWidth: '650px'
-  },
 });
 
 export default theme;
