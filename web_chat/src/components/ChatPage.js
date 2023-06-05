@@ -111,7 +111,9 @@ const ChatPage = ({ token, onLogout }) => {
                                 transition: buttonClicked // Only transition if button was clicked
                                     ? 'left 0.5s ease'
                                     : undefined,
-                                zIndex: sidePanelOpen ? 3 : 1,
+                                zIndex: isLargeScreen
+                                ? (sidePanelOpen && !buttonClicked) ? 3 : 1 // Put forth SidePanel when SidePanel open and not in transition
+                                : (sidePanelOpen || buttonClicked) ? 3 : 1, // Put forth SidePanel when SidePanel open and in transition
                             }}
                         >
                             <Box // SidePanel
