@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ChatSessionList from './ChatSessionList';
 
-function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, userEmail }) {
+function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userEmail }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   // This handles the click on the three-dot button.
@@ -46,7 +46,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
           <MenuItem onClick={handleClose}>Billing</MenuItem>
           {/* Add more menu items as needed */}
         </Menu>

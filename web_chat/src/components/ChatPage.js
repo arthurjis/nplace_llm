@@ -126,7 +126,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     onChatSessionSelect={handleChatSessionSelect}
                                     refreshChatSessionsSignal={refreshChatSessionsSignal}
                                     handleStartChat={handleStartChat}
-                                    onLogout={handleLogout}
+                                    handleLogout={handleLogout}
                                 />
                             </Box>
                         </Box>
@@ -190,89 +190,3 @@ const ChatPage = ({ token, onLogout }) => {
 };
 
 export default ChatPage;
-
-
-
-        // <SocketContext.Provider value={socket}>
-        //     <Box
-        //         sx={{
-        //             display: 'flex',
-        //             flexDirection: 'row',
-        //             alignItems: 'center',
-        //             justifyContent: 'center',
-        //             height: '100vh',
-        //             backgroundColor: '#FFFFAA',
-        //         }}
-        //     >
-        //         {socket ? (
-        //             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
-        //                 <Hidden smDown implementation="css">
-        //                     <Box
-        //                         sx={{
-        //                             bgcolor: 'white',
-        //                             border: 2,
-        //                             borderColor: 'primary.main',
-        //                             borderRadius: '12px',
-        //                             borderStyle: 'solid',
-        //                             p: 2,
-        //                             height: '80vh',
-        //                             overflowY: 'scroll',
-        //                             width: 300,
-        //                         }}
-        //                     >
-        //                         {/* <SidePanel
-        //                                 token={token}
-        //                                 onChatSessionSelect={handleChatSessionSelect}
-        //                                 refreshChatSessionsSignal={refreshChatSessionsSignal}
-        //                                 onLogout={handleLogout}
-        //                             /> */}
-        //                     </Box>
-        //                 </Hidden>
-
-        //                 <Box
-        //                     sx={{
-        //                         bgcolor: 'white',
-        //                         border: 2,
-        //                         borderColor: '#AA1231',
-        //                         borderRadius: '12px',
-        //                         borderStyle: 'solid',
-        //                         p: 2,
-        //                         height: '80vh',
-        //                         overflowY: 'scroll',
-        //                         // flexGrow: 1,
-        //                         // maxWidth: 900,
-        //                         minWidth: 600,
-        //                     }}
-        //                 >
-        //                     {/* <Chat
-        //                             token={token}
-        //                             selectedChatSession={selectedChatSession}
-        //                             setSelectedChatSession={setSelectedChatSession}
-        //                             refreshChatSessions={handleRefreshChatSessions}
-        //                         /> */}
-        //                 </Box>
-
-        //                 <Hidden mdUp implementation="js">
-        //                     <Drawer
-        //                         variant="temporary"
-        //                         open={mobileOpen}
-        //                         onClose={handleDrawerToggle}
-        //                         ModalProps={{
-        //                             keepMounted: true, // Better open performance on mobile.
-        //                         }}
-        //                     >
-        //                         <SidePanel
-        //                             token={token}
-        //                             onChatSessionSelect={handleChatSessionSelect}
-        //                             refreshChatSessionsSignal={refreshChatSessionsSignal}
-        //                             onLogout={handleLogout}
-        //                         />
-        //                     </Drawer>
-        //                 </Hidden>
-        //             </Box>
-        //         ) : (
-        //             <p>Connecting...</p>
-        //         )}
-        //     </Box>
-
-        // </SocketContext.Provider>
