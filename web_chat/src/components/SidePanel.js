@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ChatSessionList from './ChatSessionList';
 
-function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, onStartChat, userEmail }) {
+function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, userEmail }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   // This handles the click on the three-dot button.
@@ -26,7 +26,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, onSt
         refreshChatSessionsSignal={refreshChatSessionsSignal}
       />
 
-      <Button variant="contained" onClick={onStartChat}>
+      <Button variant="contained" onClick={handleStartChat}>
         Start Chat
       </Button>
 

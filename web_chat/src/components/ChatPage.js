@@ -4,15 +4,13 @@ import socketIOClient from "socket.io-client";
 import Chat from './Chat';
 import SidePanel from './SidePanel';
 import SocketContext from '../contexts/SocketContext';
-import { Box, Drawer, Hidden } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
 
-
-
 const ChatPage = ({ token, onLogout }) => {
+    // Chat-related
     const [socket, setSocket] = useState(null);
     const [selectedChatSession, setSelectedChatSession] = useState(null);
     const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
@@ -25,45 +23,36 @@ const ChatPage = ({ token, onLogout }) => {
         setSelectedChatSession(null);
         onLogout();
     };
-
+    const handleStartChat = () => {
+        setSelectedChatSession(null);
+    };
+    const handleChatSessionSelect = (chatSession) => {
+        setSelectedChatSession(chatSession);
+    };
+    const handleRefreshChatSessions = () => {
+        setRefreshChatSessionsSignal(Date.now());
+    };
     useEffect(() => {
         if (!token) {
             navigate("/login");
         }
     }, [token, navigate]);
-
-
-    const handleStartChat = () => {
-        setSelectedChatSession(null);
-    };
-
-    const handleChatSessionSelect = (chatSession) => {
-        setSelectedChatSession(chatSession);
-    };
-
-    const handleRefreshChatSessions = () => {
-        setRefreshChatSessionsSignal(Date.now());
-    };
-
     useEffect(() => {
         // Initialize socket connection here
         const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
             query: { token }
         });
         setSocket(newSocket);
-
         // Return function to clean up socket connection on unmount
         return () => {
             newSocket.close();
         };
     }, [token]);
-
     useEffect(() => {
         if (socket) {
             console.log("Socket initialized");
         }
     }, [socket]);
-
 
     // UI-related
     const [sidePanelOpen, setSidePanelOpen] = React.useState(false);
@@ -116,18 +105,13 @@ const ChatPage = ({ token, onLogout }) => {
                                 height: `${panelHeightPercentage}%`,
                                 width: `${sidePanelWidth}px`,
                                 backgroundColor: 'transparent',
-                                paddingRight: isLargeScreen
-                                    ? `${sidePanelOpen ? maxChatPanelWidth + marginBetweenPanels : maxChatPanelWidth - sidePanelWidth}px`
-                                    : undefined,
                                 left: isLargeScreen
-                                    ? undefined
+                                    ? `${sidePanelOpen ? (width - maxChatPanelWidth - sidePanelWidth - marginBetweenPanels) / 2 : Math.max(width - maxChatPanelWidth, 0) / 2}px`
                                     : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth}px`,
                                 transition: buttonClicked // Only transition if button was clicked
-                                    ? isLargeScreen
-                                        ? 'padding 0.5s ease'
-                                        : 'left 0.5s ease'
+                                    ? 'left 0.5s ease'
                                     : undefined,
-                                zIndex: isLargeScreen ? 1 : 3,
+                                zIndex: sidePanelOpen ? 3 : 1,
                             }}
                         >
                             <Box // SidePanel
@@ -141,6 +125,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     token={token}
                                     onChatSessionSelect={handleChatSessionSelect}
                                     refreshChatSessionsSignal={refreshChatSessionsSignal}
+                                    handleStartChat={handleStartChat}
                                     onLogout={handleLogout}
                                 />
                             </Box>
