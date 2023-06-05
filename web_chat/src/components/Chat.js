@@ -3,6 +3,8 @@ import Message from './Message';
 import Input from './Input';
 import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
+import { Box } from '@mui/material';
+
 
 
 function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
@@ -54,7 +56,7 @@ function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatS
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-      }
+    }
   }, [messages]);
 
   function handleSendMessage(messageText) {
@@ -80,18 +82,34 @@ function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatS
       console.debug('Sent message: ', userMessage);
     }
   }
-  
 
- return (
-   <div className="chat">
-     <div className="chat-messages" ref={messagesRef}>
-       {messages.map((message, index) => (
-         <Message key={index} message={message} isLocal={message.isLocal} />
-       ))}
-     </div>
-     <Input className="chat-input" onSendMessage={handleSendMessage} />
-   </div>
- );
+
+  return (
+    <Box
+      sx={{
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        height: '100%',
+        width: '100%',
+      }}
+    >
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflow: 'auto',
+          p: 2,
+        }}
+      >
+        {messages.map((message, index) => (
+          <Message key={index} message={message} isLocal={message.isLocal} />
+        ))}
+      </Box>
+      <Input className="chat-input" onSendMessage={handleSendMessage} />
+    </Box>
+
+  );
 }
 
 export default Chat;
