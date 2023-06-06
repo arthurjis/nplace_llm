@@ -39,12 +39,11 @@ function Login({ onLogin }) {
         if (step === 1) {
             if (!isValidEmail(email)) {
                 setEmailError(t('login.emailError'));
-                setIsLoading(false);
             } else {
                 setEmailError(null);
                 setStep(2);
-                setIsLoading(false);
             }
+            setIsLoading(false);
         } else {
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
             try {
