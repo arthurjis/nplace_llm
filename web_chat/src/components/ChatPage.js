@@ -125,7 +125,6 @@ const ChatPage = ({ token, onLogout }) => {
                         >
                             <Box // SidePanel
                                 sx={{
-                                    backgroundColor: 'gray',
                                     height: '100%',
                                     width: '100%',
                                 }}
@@ -165,7 +164,6 @@ const ChatPage = ({ token, onLogout }) => {
                                 width: '100%',
                                 maxWidth: `${maxChatPanelWidth}px`,
                                 minWidth: `${minChatPanelWidth}px`,
-                                backgroundColor: 'transparent',
                                 paddingLeft: (sidePanelOpen && isLargeScreen) ? `${sidePanelWidth + marginBetweenPanels}px` : '0px',
                                 transition: 'padding 0.5s ease',
                                 zIndex: 2,
@@ -178,7 +176,6 @@ const ChatPage = ({ token, onLogout }) => {
                         >
                             <Box // ChatPanel
                                 sx={{
-                                    backgroundColor: 'white',
                                     height: '100%',
                                     width: '100%',
                                 }}

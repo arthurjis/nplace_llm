@@ -93,6 +93,8 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         alignItems: 'stretch',
         height: '100%',
         width: '100%',
+        borderRadius: '10px',
+        backgroundColor: 'white',
       }}
     >
       <Box
