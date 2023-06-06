@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
-import Chat from './Chat';
+import ChatPanel from './ChatPanel';
 import SidePanel from './SidePanel';
 import SocketContext from '../contexts/SocketContext';
 import { Box } from '@mui/material';
@@ -169,10 +169,10 @@ const ChatPage = ({ token, onLogout }) => {
                                 paddingLeft: (sidePanelOpen && isLargeScreen) ? `${sidePanelWidth + marginBetweenPanels}px` : '0px',
                                 transition: 'padding 0.5s ease',
                                 zIndex: 2,
-                                border: 1,
-                                borderColor: '#AA1231',
-                                borderRadius: '0',
-                                borderStyle: 'dashed',
+                                // border: 1,
+                                // borderColor: '#AA1231',
+                                // borderRadius: '0',
+                                // borderStyle: 'dashed',
                             }}
                             onClick={() => { if (!isLargeScreen && sidePanelOpen) handleDrawerToggle(); }}
                         >
@@ -183,7 +183,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     width: '100%',
                                 }}
                             >
-                                <Chat
+                                <ChatPanel
                                     token={token}
                                     selectedChatSession={selectedChatSession}
                                     setSelectedChatSession={setSelectedChatSession}

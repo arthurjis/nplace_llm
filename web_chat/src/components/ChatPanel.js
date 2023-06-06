@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 
 
 
-function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
+function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -112,4 +112,4 @@ function Chat({ token, selectedChatSession, setSelectedChatSession, refreshChatS
   );
 }
 
-export default Chat;
+export default ChatPanel;
