@@ -7,6 +7,9 @@ import SocketContext from '../contexts/SocketContext';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/system';
+
 
 
 const ChatPage = ({ token, onLogout }) => {
@@ -58,11 +61,13 @@ const ChatPage = ({ token, onLogout }) => {
     const [sidePanelOpen, setSidePanelOpen] = React.useState(false);
     const [width, setWidth] = React.useState(window.innerWidth);
     const [buttonClicked, setButtonClicked] = React.useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const minChatPanelWidth = 320;    // in px
     const maxChatPanelWidth = 650;    // in px
     const sidePanelWidth = 260;       // in px
     const marginBetweenPanels = 30;   // in px
-    const panelHeightPercentage = 90; // in %
+    const panelHeightPercentage = isMobile ? 100 : 90; // in %
     const isLargeScreen = width >= maxChatPanelWidth + sidePanelWidth + marginBetweenPanels;
     const handleDrawerToggle = () => {
         setSidePanelOpen(!sidePanelOpen);
@@ -73,6 +78,8 @@ const ChatPage = ({ token, onLogout }) => {
     useEffect(() => {
         const handleResize = () => {
             setWidth(window.innerWidth);
+            // Set body height to match viewport height
+            document.body.style.height = `${window.innerHeight}px`;
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -86,8 +93,8 @@ const ChatPage = ({ token, onLogout }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    width: '100vw',
-                    height: '100vh',
+                    width: '100%',
+                    height: '100%',
                     position: 'absolute',
                     marginLeft: (width >= minChatPanelWidth) ? '0pt' : `${(minChatPanelWidth - width) / 2 + 1}px`, // In case where viewport width is less than content width and scrollX is enabled, add margin to push content to viewport center
                     backgroundColor: 'background',
@@ -107,13 +114,13 @@ const ChatPage = ({ token, onLogout }) => {
                                 backgroundColor: 'transparent',
                                 left: isLargeScreen
                                     ? `${sidePanelOpen ? (width - maxChatPanelWidth - sidePanelWidth - marginBetweenPanels) / 2 : Math.max(width - maxChatPanelWidth, 0) / 2}px`
-                                    : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth}px`,
+                                    : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth - 2}px`,
                                 transition: buttonClicked // Only transition if button was clicked
-                                    ? 'left 0.5s ease'
+                                    ? 'left 0.5s ease-out'
                                     : undefined,
                                 zIndex: isLargeScreen
-                                ? (sidePanelOpen && !buttonClicked) ? 3 : 1 // Put forth SidePanel when SidePanel open and not in transition
-                                : (sidePanelOpen || buttonClicked) ? 3 : 1, // Put forth SidePanel when SidePanel open and in transition
+                                    ? (sidePanelOpen && !buttonClicked) ? 3 : 1 // Put forth SidePanel when SidePanel open and not in transition
+                                    : (sidePanelOpen || buttonClicked) ? 3 : 1, // Put forth SidePanel when SidePanel open and in transition
                             }}
                         >
                             <Box // SidePanel
@@ -132,6 +139,22 @@ const ChatPage = ({ token, onLogout }) => {
                                 />
                             </Box>
                         </Box>
+
+                        {
+                            (!isLargeScreen) &&
+                            <Box // Blank Box to cover the deactivated SidePanel for smaller screens
+                                sx={{
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 0,
+                                    height: '100%',
+                                    width: `${Math.max(width - maxChatPanelWidth, 0) / 2 - 1}px`,
+                                    backgroundColor: 'background',
+                                    zIndex: 5
+                                }}
+                            />
+                        }
+
                         <Box // ChatPanel Parent Container
                             sx={{
                                 display: 'flex',
@@ -151,6 +174,7 @@ const ChatPage = ({ token, onLogout }) => {
                                 borderRadius: '0',
                                 borderStyle: 'dashed',
                             }}
+                            onClick={() => { if (!isLargeScreen && sidePanelOpen) handleDrawerToggle(); }}
                         >
                             <Box // ChatPanel
                                 sx={{
@@ -171,15 +195,17 @@ const ChatPage = ({ token, onLogout }) => {
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
-                            edge="end"
+                            // edge="end"
                             onClick={handleDrawerToggle}
                             sx={{
                                 position: 'fixed',
-                                bottom: 20,
-                                right: 20,
-                                bgcolor: 'white',
-                                borderRadius: '50%',
-                                zIndex: 5
+                                bottom: `${(100 - panelHeightPercentage) / 2 + 30}%`,
+                                left: `${Math.max(width - maxChatPanelWidth -80, 0) / 2}px`,
+                                // borderRadius: '50%',
+                                zIndex: 5,
+                                width: '40px',
+                                height: '40px',
+                                background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
                             }}
                         >
                             <MenuIcon />
