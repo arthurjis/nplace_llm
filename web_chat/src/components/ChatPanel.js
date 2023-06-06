@@ -95,6 +95,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         width: '100%',
         borderRadius: '10px',   // To finetune
         backgroundColor: 'white',   // To finetune
+        overflowY: 'hidden', 
       }}
     >
       <Box

@@ -44,6 +44,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'black',
           ml: '8px',
+          mr: '12px',
           alignSelf: 'flex-end',
           mb: '1px',
           transform: inputActive ? 'none' : 'none',
@@ -94,6 +95,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'black',
           mr: '8px',
+          ml: '12px',
           mb: '1px',
           alignSelf: 'flex-end',
         }}
