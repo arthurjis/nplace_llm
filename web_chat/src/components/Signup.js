@@ -19,26 +19,25 @@ function Signup({ onLogin }) {
     const [accountExistError, setAccountExistError] = useState(null);
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
     const { t, i18n } = useTranslation();
-
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
             {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
             {children}
         </span>
     );
-
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
-
     const handleContinue = async (event) => {
         event.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
         if (step === 1) {
             if (!isValidEmail(email)) {
                 setEmailError(t('signup.emailError'));
@@ -46,6 +45,7 @@ function Signup({ onLogin }) {
                 setEmailError(null);
                 setStep(2);
             }
+            setIsLoading(false);
         } else {
             if (password.length < 8) {
                 setPasswordError(t('signup.passwordError'));
@@ -63,6 +63,8 @@ function Signup({ onLogin }) {
                 } else {
                     console.error(error);
                 }
+            } finally {
+                setIsLoading(false);
             }
         }
     };
@@ -189,6 +191,7 @@ function Signup({ onLogin }) {
                             fullWidth
                             variant="contained"
                             color="primary"
+                            disabled={isLoading}
                             style={{ height: "52px", borderRadius: 2, textTransform: 'none', fontSize: '16px' }}
                         >
                             {t('signup.continue')}
