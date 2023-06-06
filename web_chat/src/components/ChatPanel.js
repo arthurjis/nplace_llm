@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 
 
 
-function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions }) {
+function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(null);
@@ -102,13 +102,19 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           flexGrow: 1,
           overflow: 'auto',
           p: 2,
+          border: 2,
+          borderStyle: 'dashed',
+          borderColor: 'gray',
         }}
       >
         {messages.map((message, index) => (
           <Message key={index} message={message} isLocal={message.isLocal} />
         ))}
       </Box>
-      <Input className="chat-input" onSendMessage={handleSendMessage} />
+      <Input className="chat-input" 
+        onSendMessage={handleSendMessage}
+        handleMenuClick={handleDrawerToggle}
+      />
     </Box>
 
   );

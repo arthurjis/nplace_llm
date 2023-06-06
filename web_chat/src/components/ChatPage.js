@@ -185,11 +185,12 @@ const ChatPage = ({ token, onLogout }) => {
                                     selectedChatSession={selectedChatSession}
                                     setSelectedChatSession={setSelectedChatSession}
                                     refreshChatSessions={handleRefreshChatSessions}
+                                    handleDrawerToggle={handleDrawerToggle}
                                 />
                             </Box>
                         </Box>
 
-                        <IconButton
+                        {/* <IconButton
                             color="inherit"
                             aria-label="open drawer"
                             // edge="end"
@@ -206,7 +207,7 @@ const ChatPage = ({ token, onLogout }) => {
                             }}
                         >
                             <MenuIcon />
-                        </IconButton>
+                        </IconButton> */}
                     </>
                 ) : (<p>Connecting...</p>)}
             </Box >
