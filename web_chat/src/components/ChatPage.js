@@ -5,8 +5,6 @@ import ChatPanel from './ChatPanel';
 import SidePanel from './SidePanel';
 import SocketContext from '../contexts/SocketContext';
 import { Box } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/system';
 

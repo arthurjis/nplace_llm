@@ -34,7 +34,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         // border: 1,
         borderStyle: 'none',
         // borderColor: 'red',
-        borderRadius: '1.2em',
+        borderRadius: '24pt',
         backgroundColor: '#F4E8D9',
       }}
     >
@@ -45,17 +45,11 @@ function Input({ onSendMessage, handleMenuClick }) {
           color: 'black',
           ml: '8px',
           alignSelf: 'flex-end',
+          mb: '1px',
           transform: inputActive ? 'none' : 'none',
           // transform: inputActive ? 'translateX(-100%)' : 'none',
           // transition: 'transform 0.3s ease-out',
         }}
-      // sx={{
-      //   // transform: inputActive ? 'translateX(-100%)' : 'none',
-      //   // transition: 'transform 0.3s ease-out',
-      //   color: 'black',
-      //   backgroundColor: 'gray',
-      //   // ml: '2em',
-      // }}
       >
         <MenuIcon />
       </IconButton>
@@ -91,7 +85,7 @@ function Input({ onSendMessage, handleMenuClick }) {
           '& .MuiInputBase-inputMultiline': {
             lineHeight: 'normal',
             whiteSpace: 'pre-wrap',
-            padding: '10px 0',
+            padding: '12px 0',   // To finetune
           },
         }}
       />
@@ -100,6 +94,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'black',
           mr: '8px',
+          mb: '1px',
           alignSelf: 'flex-end',
         }}
       >
