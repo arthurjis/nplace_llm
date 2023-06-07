@@ -39,9 +39,11 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
             key={chatSession.id}
             sx={{
               height: '44px',
-              marginBottom: '10px',
+              marginBottom: '12px',
               alignSelf: 'flex-start',
               borderRadius: '15px',
+              border: 1,
+              borderColor: '#f2de8f',
             }}
           >
             <ListItemIcon>
