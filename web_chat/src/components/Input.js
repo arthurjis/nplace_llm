@@ -3,6 +3,7 @@ import { IconButton, TextField, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SendIcon from '@mui/icons-material/Send';
 
+
 function Input({ onSendMessage, handleMenuClick }) {
   const [message, setMessage] = useState('');
   const [inputActive, setInputActive] = useState(false);
@@ -33,7 +34,8 @@ function Input({ onSendMessage, handleMenuClick }) {
         margin: '0.5em 1.5em 0.5em',   // To finetune
         borderStyle: 'none',
         borderRadius: '24pt',   // To finetune
-        backgroundColor: '#F4E8D9',   // To finetune
+        // backgroundColor: '#F4E8D9',   // To finetune
+        backgroundColor: 'primary.main',   // To finetune
       }}
     >
       <IconButton
