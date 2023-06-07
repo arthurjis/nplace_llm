@@ -115,7 +115,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           }}
         >
           {messages.map((message, index) => (
-            <Message key={index} message={message} isLocal={message.isLocal} likedByRemote={true} />
+            <Message key={index} message={message} isLocal={message.isLocal} likedByRemote={false} />
           ))}
           <div ref={messagesEndRef} />
         </Box>

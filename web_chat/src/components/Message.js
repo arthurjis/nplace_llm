@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 
 function Message({ message, isLocal, likedByRemote }) {
-  const profilePhotoUrl = isLocal ? '/logo192.png' : '/logo192.png';
+  // const profilePhotoUrl = isLocal ? '/logo192.png' : '/logo192.png';
   const [liked, setLiked] = useState(false);
   const handleLike = () => {
     setLiked(!liked);
