@@ -55,7 +55,7 @@ function Input({ onSendMessage, handleMenuClick }) {
           color: 'primary.contrastText', // Finetune
           ml: '8px',   // Finetune
           alignSelf: 'flex-end',
-          mb: '1px',
+          mb:  '3px',
           transform: inputActive ? 'none' : 'none',
           // transform: inputActive ? 'translateX(-100%)' : 'none',
           // transition: 'transform 0.3s ease-out',
@@ -104,7 +104,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'primary.contrastText', // Finetune
           mr: '8px', // Finetune
-          mb: '1px', // Finetune
+          mb: '3px', // Finetune
           alignSelf: 'flex-end',
         }}
       >
