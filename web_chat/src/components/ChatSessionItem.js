@@ -14,7 +14,7 @@ class ChatSessionItem extends React.Component {
         const { name } = this.props.chatSession;
         return (
             <div onClick={this.handleClick}>
-                <h3>{name}</h3>
+                <p style={{ fontSize: '1em', color: '#444444' }}>{name}</p>
             </div>
         );
     }
