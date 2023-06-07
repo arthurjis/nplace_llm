@@ -95,7 +95,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         width: '100%',
         borderRadius: '10px',   // To finetune
         backgroundColor: 'white',   // To finetune
-        overflowY: 'hidden', 
+        overflowY: 'hidden',
       }}
     >
       <Box
@@ -112,7 +112,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           <Message key={index} message={message} isLocal={message.isLocal} />
         ))}
       </Box>
-      <Input className="chat-input" 
+      <Input className="chat-input"
         onSendMessage={handleSendMessage}
         handleMenuClick={handleDrawerToggle}
       />

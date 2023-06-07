@@ -76,8 +76,6 @@ const ChatPage = ({ token, onLogout }) => {
     useEffect(() => {
         const handleResize = () => {
             setWidth(window.innerWidth);
-            // Set body height to match viewport height
-            document.body.style.height = `${window.innerHeight}px`;
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -187,25 +185,6 @@ const ChatPage = ({ token, onLogout }) => {
                                 />
                             </Box>
                         </Box>
-
-                        {/* <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            // edge="end"
-                            onClick={handleDrawerToggle}
-                            sx={{
-                                position: 'fixed',
-                                bottom: `${(100 - panelHeightPercentage) / 2 + 30}%`,
-                                left: `${Math.max(width - maxChatPanelWidth -80, 0) / 2}px`,
-                                // borderRadius: '50%',
-                                zIndex: 5,
-                                width: '40px',
-                                height: '40px',
-                                background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton> */}
                     </>
                 ) : (<p>Connecting...</p>)}
             </Box >
