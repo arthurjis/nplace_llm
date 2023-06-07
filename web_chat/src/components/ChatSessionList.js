@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import Box from '@mui/material/Box';
 import ChatSessionItem from './ChatSessionItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
   const [chatSessions, setChatSessions] = useState([]);
+  const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
@@ -14,16 +17,22 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         'Authorization': `Bearer ${token}`
       }
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log(`Received ${data.chat_sessions.length} chat sessions`);
-      console.log(data.chat_sessions);
-      setChatSessions(data.chat_sessions);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        console.log(`Received ${data.chat_sessions.length} chat sessions`);
+        console.log(data.chat_sessions);
+        setChatSessions(data.chat_sessions);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }, [token]);
+
+  const onSelectSession = (chatSession) => {
+    console.log(chatSession);
+    setSelectedChatSessionID(chatSession);
+    onChatSessionSelect(chatSession);
+};
 
   useEffect(() => {
     fetchChatSessions();
@@ -33,12 +42,45 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
       <List component="nav" aria-label="chat sessions">
         {chatSessions.map(chatSession => (
-          <ListItem button key={chatSession.id}>
-            <ChatSessionItem 
-              chatSession={chatSession} 
-              onSelect={onChatSessionSelect}
+          <ListItemButton
+            key={chatSession.id}
+            sx={{
+              height: '44px',
+              marginBottom: '12px',
+              alignSelf: 'flex-start',
+              borderRadius: '15px',
+              border: 1,
+              borderColor: '#fbf7e6',
+              backgroundColor: chatSession.id === selectedChatSessionID ? '#fbf7e6' : 'transparent',
+              '&.MuiListItemButton-root': {
+                '&:hover': {
+                  backgroundColor: '#fbf7e6 !important', // override hover state
+                },
+                '&.Mui-focusVisible': {
+                  backgroundColor: '#fbf7e6', // override focus state
+                },
+                '& .MuiTouchRipple-root': {
+                  display: 'none', // disable ripple effect
+                },
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#fbf7e6', // override selected state
+              },
+            }}
+          >
+            <ListItemIcon>
+              <ChatBubbleOutlineIcon
+                sx={{
+                  fontSize: '20px',
+                  color: 'primary.main.contrastText',
+                }}
+              />
+            </ListItemIcon>
+            <ChatSessionItem
+              chatSession={chatSession}
+              onSelect={onSelectSession}
             />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </Box>

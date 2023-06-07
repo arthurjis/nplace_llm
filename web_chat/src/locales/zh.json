@@ -22,6 +22,13 @@
       "emailError": "邮箱格式不正确",
       "passwordError": "密码必须包含至少八个字符",
       "accountExistError": "邮箱已注册"
+    },
+    "input": {
+      "typeYourMessage": "输入您的信息......"   
+    },
+    "sidePanel": {
+      "startNewChat": "新的聊天",
+      "logOut": "登出"
     }
   }
   

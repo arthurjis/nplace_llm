@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, TextField, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SendIcon from '@mui/icons-material/Send';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+
 
 
 function Input({ onSendMessage, handleMenuClick }) {
   const [message, setMessage] = useState('');
   const [inputActive, setInputActive] = useState(false);
+  const { lang } = useParams();
+  const validLanguages = ['en', 'zh'];
+  const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
+  const { t, i18n } = useTranslation();
   const handleSubmit = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
       return;
     }
-    if (e.key === 'Enter' || e.type === 'submit') {
+    console.log(message);
+    if ((e.key === 'Enter' || e.type === 'submit') && message.trim() !== '') {
       e.preventDefault();
       onSendMessage(message);
       setMessage('');
@@ -21,6 +29,10 @@ function Input({ onSendMessage, handleMenuClick }) {
   const handleBlur = () => {
     setInputActive(false);
   }
+  // Change language based on the URL parameter
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language, i18n]);
 
   return (
     <Box
@@ -44,7 +56,7 @@ function Input({ onSendMessage, handleMenuClick }) {
           color: 'primary.contrastText', // Finetune
           ml: '8px',   // Finetune
           alignSelf: 'flex-end',
-          mb: '1px',
+          mb:  '3px',
           transform: inputActive ? 'none' : 'none',
           // transform: inputActive ? 'translateX(-100%)' : 'none',
           // transition: 'transform 0.3s ease-out',
@@ -59,7 +71,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleSubmit}
         multiline
-        placeholder="Type your message......"   // To finetune
+        placeholder={t('input.typeYourMessage')} // To finetune
         variant="outlined"
         fullWidth
         minRows={1}
@@ -93,7 +105,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'primary.contrastText', // Finetune
           mr: '8px', // Finetune
-          mb: '1px', // Finetune
+          mb: '3px', // Finetune
           alignSelf: 'flex-end',
         }}
       >

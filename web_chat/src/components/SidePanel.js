@@ -1,58 +1,81 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ChatSessionList from './ChatSessionList';
+import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
+
+
 
 function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userEmail }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+    const { lang } = useParams();
+    const validLanguages = ['en', 'zh'];
+    const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
+    const { t, i18n } = useTranslation();
+    // Change language based on the URL parameter
+    useEffect(() => {
+        i18n.changeLanguage(language);
+    }, [language, i18n]);
 
-  // This handles the click on the three-dot button.
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    return (
+        <div className="side-panel"
+            style={{
+                backgroundColor: '#f6ebbe',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: '30px',
+                padding: '0pt 16pt'
 
-  // This handles closing the dropdown menu.
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <div className="side-panel">
-      <ChatSessionList
-        token={token}
-        onChatSessionSelect={onChatSessionSelect}
-        refreshChatSessionsSignal={refreshChatSessionsSignal}
-      />
-
-      <Button variant="contained" onClick={handleStartChat}>
-        Start Chat
-      </Button>
-
-      <div>
-        {userEmail}
-        <Button
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          onClick={handleClick}
+            }}
         >
-          <MoreVertIcon />
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          <MenuItem onClick={handleClose}>Billing</MenuItem>
-          {/* Add more menu items as needed */}
-        </Menu>
-      </div>
-    </div>
-  );
+            <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt', flexDirection: 'column', flexGrow: 1 }}>
+                <ChatSessionList
+                    token={token}
+                    onChatSessionSelect={onChatSessionSelect}
+                    refreshChatSessionsSignal={refreshChatSessionsSignal}
+                />
+            </div>
+
+            <Button
+                variant="contained"
+                onClick={handleStartChat}
+                style={{
+                    width: '100%',
+                    marginTop: 'auto',
+                    height: '44px',
+                    borderRadius: '15px',
+                    textTransform: 'none',
+                    fontSize: '16px',
+                }}
+                sx={{
+                    backgroundColor: 'primary.light',
+                }}
+            >
+                {t('sidePanel.startNewChat')}
+            </Button>
+
+            <Button
+                variant="contained"
+                onClick={handleLogout}
+                style={{
+                    width: '100%',
+                    marginTop: '10px',
+                    marginBottom: '20px',
+                    height: '44px',
+                    borderRadius: '15px',
+                    textTransform: 'none',
+                    fontSize: '16px',
+                }}
+                sx={{
+                    backgroundColor: 'primary.light',
+                }}
+            >
+                {t('sidePanel.logOut')}
+            </Button>
+        </div>
+    );
 }
 
 export default SidePanel;

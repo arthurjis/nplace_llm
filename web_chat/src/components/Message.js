@@ -19,15 +19,15 @@ function Message({ message, isLocal, likedByRemote }) {
       flexDirection: 'row',
       alignSelf: isLocal ? 'flex-end' : 'flex-start',
     }}>
-      {isLocal && likedByRemote && (
+      {isLocal && (
         <IconButton disabled sx={{
           alignSelf: 'flex-end',
           '&.Mui-disabled': {
             color: 'liked.main',
           },
-          marginLeft: '10pt',
+          marginLeft: likedByRemote ? '10pt' : '30pt',
         }}>
-          <FavoriteIcon />
+          {likedByRemote ? <FavoriteIcon /> : <></>}
         </IconButton>
       )}
       <Box
@@ -37,7 +37,7 @@ function Message({ message, isLocal, likedByRemote }) {
           alignItems: 'flex-start',
           backgroundColor: isLocal ? 'primary.light' : 'secondary.light',  // Finetune: bg color
           color: isLocal ? 'text.primary' : 'text.primary', // Finetune: font color
-          padding: isLocal ? '1em 2em 1em 2em': '2em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
+          padding: isLocal ? '1em 2em 1em 2em' : '1em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
           borderRadius: '15px',  // Finetune
           maxWidth: '280pt', // Finetune: Change this for bubble max-width
           wordBreak: 'break-word',
@@ -87,11 +87,18 @@ function Message({ message, isLocal, likedByRemote }) {
             component="p"
             align="left"
             sx={{
-              m: 0,  // Finetune
-              fontWeight: 500,  // Finetune
-              fontSize: '1em'  // Finetune
-            }}>
-            {message.text}
+              m: 0,
+              fontWeight: 500,
+              fontSize: '1em',
+              whiteSpace: 'pre-wrap',
+            }}
+          >
+            {message.text.split('\n').map((line, index, arr) => (
+              <span key={index}>
+                {line}
+                {index !== arr.length - 1 && <br />}
+              </span>
+            ))}
           </Typography>
         </Box>
       </Box>
