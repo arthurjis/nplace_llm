@@ -27,7 +27,7 @@ function Message({ message, isLocal, likedByRemote }) {
           },
           marginLeft: likedByRemote ? '10pt' : '30pt',
         }}>
-          {likedByRemote ? <FavoriteIcon /> :<></>}
+          {likedByRemote ? <FavoriteIcon /> : <></>}
         </IconButton>
       )}
       <Box
@@ -37,7 +37,7 @@ function Message({ message, isLocal, likedByRemote }) {
           alignItems: 'flex-start',
           backgroundColor: isLocal ? 'primary.light' : 'secondary.light',  // Finetune: bg color
           color: isLocal ? 'text.primary' : 'text.primary', // Finetune: font color
-          padding: isLocal ? '1em 2em 1em 2em': '1em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
+          padding: isLocal ? '1em 2em 1em 2em' : '1em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
           borderRadius: '15px',  // Finetune
           maxWidth: '280pt', // Finetune: Change this for bubble max-width
           wordBreak: 'break-word',
@@ -91,8 +91,12 @@ function Message({ message, isLocal, likedByRemote }) {
               fontWeight: 500,  // Finetune
               fontSize: '1em'  // Finetune
             }}>
-            {message.text}
-          </Typography>
+            {message.text.split('\n').map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}          </Typography>
         </Box>
       </Box>
 
