@@ -88,7 +88,7 @@ function Login({ onLogin }) {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                                 error={!!emailError}
                                 helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
@@ -135,7 +135,7 @@ function Login({ onLogin }) {
                                             </IconButton>
                                         </InputAdornment>
                                     ),
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                             />
                             <TextField
@@ -155,7 +155,7 @@ function Login({ onLogin }) {
                                 }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 },
+                                    style: { height: "52px", borderRadius: '15px' },
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
@@ -206,7 +206,7 @@ function Login({ onLogin }) {
                             disabled={isLoading}
                             sx={{
                                 height: '52px',
-                                borderRadius: '2pt',
+                                borderRadius: '30px',
                                 textTransform: 'none',
                                 fontSize: '16px',
                                 bgcolor: 'primary.main',

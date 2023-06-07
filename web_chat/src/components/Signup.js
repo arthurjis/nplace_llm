@@ -98,7 +98,7 @@ function Signup({ onLogin }) {
                                     setAccountExistError(false);
                                 }}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                                 error={!!emailError}
                                 helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
@@ -146,7 +146,7 @@ function Signup({ onLogin }) {
                                             </IconButton>
                                         </InputAdornment>
                                     ),
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                                 error={!!accountExistError}
                                 helperText={<HelperText error={!!accountExistError}>{accountExistError}</HelperText>}
@@ -169,7 +169,7 @@ function Signup({ onLogin }) {
                                 }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 },
+                                    style: { height: "52px", borderRadius: '15px' },
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
@@ -211,7 +211,7 @@ function Signup({ onLogin }) {
                                             t('signup.passwordRules')
                                         }
                                         multiline
-                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: 2 }}
+                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: '15px' }}
                                     />
                                 </Box>
                             )}
@@ -225,7 +225,7 @@ function Signup({ onLogin }) {
                             disabled={isLoading}
                             sx={{
                                 height: '52px',
-                                borderRadius: '2pt',
+                                borderRadius: '30px',
                                 textTransform: 'none',
                                 fontSize: '16px',
                                 bgcolor: 'primary.main',
