@@ -9,6 +9,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
   const [chatSessions, setChatSessions] = useState([]);
+  const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
@@ -27,6 +28,12 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
       });
   }, [token]);
 
+  const onSelectSession = (chatSession) => {
+    console.log(chatSession);
+    setSelectedChatSessionID(chatSession);
+    onChatSessionSelect(chatSession);
+};
+
   useEffect(() => {
     fetchChatSessions();
   }, [token, refreshChatSessionsSignal, fetchChatSessions]);
@@ -43,7 +50,22 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
               alignSelf: 'flex-start',
               borderRadius: '15px',
               border: 1,
-              borderColor: '#f2de8f',
+              borderColor: '#fbf7e6',
+              backgroundColor: chatSession.id === selectedChatSessionID ? '#fbf7e6' : 'transparent',
+              '&.MuiListItemButton-root': {
+                '&:hover': {
+                  backgroundColor: '#fbf7e6 !important', // override hover state
+                },
+                '&.Mui-focusVisible': {
+                  backgroundColor: '#fbf7e6', // override focus state
+                },
+                '& .MuiTouchRipple-root': {
+                  display: 'none', // disable ripple effect
+                },
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#fbf7e6', // override selected state
+              },
             }}
           >
             <ListItemIcon>
@@ -56,7 +78,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
             </ListItemIcon>
             <ChatSessionItem
               chatSession={chatSession}
-              onSelect={onChatSessionSelect}
+              onSelect={onSelectSession}
             />
           </ListItemButton>
         ))}
