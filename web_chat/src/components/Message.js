@@ -19,15 +19,15 @@ function Message({ message, isLocal, likedByRemote }) {
       flexDirection: 'row',
       alignSelf: isLocal ? 'flex-end' : 'flex-start',
     }}>
-      {isLocal && likedByRemote && (
+      {isLocal && (
         <IconButton disabled sx={{
           alignSelf: 'flex-end',
           '&.Mui-disabled': {
             color: 'liked.main',
           },
-          marginLeft: '10pt',
+          marginLeft: likedByRemote ? '10pt' : '30pt',
         }}>
-          <FavoriteIcon />
+          {likedByRemote ? <FavoriteIcon /> :<></>}
         </IconButton>
       )}
       <Box
