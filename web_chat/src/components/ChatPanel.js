@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import Message from './Message';
 import Input from './Input';
-import './Chat.css';
 import SocketContext from '../contexts/SocketContext';
 import { Box } from '@mui/material';
 

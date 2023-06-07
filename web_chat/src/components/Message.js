@@ -37,7 +37,7 @@ function Message({ message, isLocal, likedByRemote }) {
           alignItems: 'flex-start',
           backgroundColor: isLocal ? 'primary.light' : 'secondary.light',  // Finetune: bg color
           color: isLocal ? 'text.primary' : 'text.primary', // Finetune: font color
-          padding: isLocal ? '1em 2em 1em 2em': '2em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
+          padding: isLocal ? '1em 2em 1em 2em': '1em 2em 1em 2em',    // Finetune: Modify "p" for padding around message text 
           borderRadius: '15px',  // Finetune
           maxWidth: '280pt', // Finetune: Change this for bubble max-width
           wordBreak: 'break-word',
