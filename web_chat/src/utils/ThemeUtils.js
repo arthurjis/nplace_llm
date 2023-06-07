@@ -6,7 +6,7 @@ const theme = createTheme({
       // main: '#6200EE',
       // main: '#B1B695',
       main: '#b9dcf2',
-      light: 'red',
+      light: '#e2f1f9',
       dark: '#0085d8',
       contrastText: '#596175',
     },
@@ -16,12 +16,13 @@ const theme = createTheme({
       dark: '#f6cfbe',
       contrastText: '#f6cfbe',
     },
-    background: '#f5f5f5',
+    background: '#f1f1f1',
+    chatPanelBG: '#fcfaf5',
     liked: {
       main: 'red',
     },
     text: {
-      primary: '#000000',
+      primary: '#444444',
       secondary: '#888888',
     },
 
