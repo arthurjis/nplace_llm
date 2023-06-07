@@ -30,21 +30,18 @@ function Input({ onSendMessage, handleMenuClick }) {
         flexDirection: 'row',
         alignItems: 'stretch',
         justifyContent: 'space-between',
-        margin: '0.5em 1.5em 0.5em',
-        // border: 1,
+        margin: '0.5em 1.5em 0.5em',   // To finetune
         borderStyle: 'none',
-        // borderColor: 'red',
-        borderRadius: '24pt',
-        backgroundColor: '#F4E8D9',
+        borderRadius: '24pt',   // To finetune
+        backgroundColor: '#F4E8D9',   // To finetune
       }}
     >
       <IconButton
         onClick={handleMenuClick}
         disableRipple
         sx={{
-          color: 'black',
-          ml: '8px',
-          mr: '12px',
+          color: 'black',   // To finetune
+          ml: '8px',   // To finetune
           alignSelf: 'flex-end',
           mb: '1px',
           transform: inputActive ? 'none' : 'none',
@@ -61,7 +58,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleSubmit}
         multiline
-        placeholder="Type your message......"
+        placeholder="Type your message......"   // To finetune
         variant="outlined"
         fullWidth
         minRows={1}
@@ -86,16 +83,15 @@ function Input({ onSendMessage, handleMenuClick }) {
           '& .MuiInputBase-inputMultiline': {
             lineHeight: 'normal',
             whiteSpace: 'pre-wrap',
-            padding: '12px 0',   // To finetune
+            padding: '12px 12px',   // To finetune
           },
         }}
       />
       <IconButton type="submit"
         disableRipple
         sx={{
-          color: 'black',
-          mr: '8px',
-          ml: '12px',
+          color: 'black',   // To finetune
+          mr: '8px',   // To finetune
           mb: '1px',
           alignSelf: 'flex-end',
         }}
