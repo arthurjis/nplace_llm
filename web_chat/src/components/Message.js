@@ -89,7 +89,8 @@ function Message({ message, isLocal, likedByRemote }) {
             sx={{
               m: 0,  // Finetune
               fontWeight: 500,  // Finetune
-              fontSize: '1em'  // Finetune
+              fontSize: '1em',  // Finetune
+              whiteSpace: 'pre-wrap',
             }}>
             {message.text.split('\n').map((line, index) => (
               <span key={index}>

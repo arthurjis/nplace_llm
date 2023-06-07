@@ -18,7 +18,8 @@ function Input({ onSendMessage, handleMenuClick }) {
     if (e.key === 'Enter' && e.shiftKey) {
       return;
     }
-    if (e.key === 'Enter' || e.type === 'submit') {
+    console.log(message);
+    if ((e.key === 'Enter' || e.type === 'submit') && message.trim() !== '') {
       e.preventDefault();
       onSendMessage(message);
       setMessage('');
