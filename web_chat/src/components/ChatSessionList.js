@@ -1,11 +1,14 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Box from '@mui/material/Box';
 import ChatSessionItem from './ChatSessionItem';
 
-import React, { useState, useEffect, useCallback } from 'react';
 
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
   const [chatSessions, setChatSessions] = useState([]);
 
-const fetchChatSessions = useCallback(() => {
+  const fetchChatSessions = useCallback(() => {
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -21,22 +24,24 @@ const fetchChatSessions = useCallback(() => {
       console.error('Error:', error);
     });
   }, [token]);
-  
+
   useEffect(() => {
     fetchChatSessions();
   }, [token, refreshChatSessionsSignal, fetchChatSessions]);
-  
 
   return (
-    <div className="chat-session-list">
-      {chatSessions.map(chatSession => (
-        <ChatSessionItem
-          key={chatSession.id}
-          chatSession={chatSession}
-          onSelect={onChatSessionSelect}
-        />
-      ))}
-    </div>
+    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <List component="nav" aria-label="chat sessions">
+        {chatSessions.map(chatSession => (
+          <ListItem button key={chatSession.id}>
+            <ChatSessionItem 
+              chatSession={chatSession} 
+              onSelect={onChatSessionSelect}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 }
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@material-ui/core';
+import { Button, TextField, Typography, Grid, Link, InputAdornment, IconButton, Box, OutlinedInput } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 import { isValidEmail } from '../utils/EmailUtils';
 import ErrorIcon from '@mui/icons-material/Error';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTranslation } from 'react-i18next';
 
 
@@ -19,26 +19,25 @@ function Signup({ onLogin }) {
     const [accountExistError, setAccountExistError] = useState(null);
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
     const { t, i18n } = useTranslation();
-
     const HelperText = ({ error, children }) => (
         <span style={{ fontSize: '12px', display: 'flex', alignItems: 'center', color: error ? 'red' : 'inherit', marginLeft: '-12px' }}>
             {error && <ErrorIcon color="error" style={{ fontSize: '16px', marginRight: '8px' }} />}
             {children}
         </span>
     );
-
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
-
     const handleContinue = async (event) => {
         event.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
         if (step === 1) {
             if (!isValidEmail(email)) {
                 setEmailError(t('signup.emailError'));
@@ -46,6 +45,7 @@ function Signup({ onLogin }) {
                 setEmailError(null);
                 setStep(2);
             }
+            setIsLoading(false);
         } else {
             if (password.length < 8) {
                 setPasswordError(t('signup.passwordError'));
@@ -63,6 +63,8 @@ function Signup({ onLogin }) {
                 } else {
                     console.error(error);
                 }
+            } finally {
+                setIsLoading(false);
             }
         }
     };
@@ -96,10 +98,26 @@ function Signup({ onLogin }) {
                                     setAccountExistError(false);
                                 }}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                                 error={!!emailError}
                                 helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
+                                sx={{
+                                    '.MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'primary.dark',
+                                        },
+                                    },
+                                    '.MuiInputLabel-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                    '.MuiInputLabel-root.Mui-focused': {
+                                        color: 'primary.contrastText',
+                                    },
+                                }}
                             />
                         </>
                     ) : (
@@ -128,7 +146,7 @@ function Signup({ onLogin }) {
                                             </IconButton>
                                         </InputAdornment>
                                     ),
-                                    style: { height: "52px", borderRadius: 2 }
+                                    style: { height: "52px", borderRadius: '15px' }
                                 }}
                                 error={!!accountExistError}
                                 helperText={<HelperText error={!!accountExistError}>{accountExistError}</HelperText>}
@@ -151,7 +169,7 @@ function Signup({ onLogin }) {
                                 }}
                                 type={showPassword ? 'text' : 'password'}
                                 InputProps={{
-                                    style: { height: "52px", borderRadius: 2 },
+                                    style: { height: "52px", borderRadius: '15px' },
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton
@@ -166,6 +184,22 @@ function Signup({ onLogin }) {
 
                                 }}
                                 error={!!passwordError}
+                                sx={{
+                                    '.MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'primary.dark',
+                                        },
+                                    },
+                                    '.MuiInputLabel-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                    '.MuiInputLabel-root.Mui-focused': {
+                                        color: 'primary.contrastText',
+                                    },
+                                }}
                             />
                             {passwordTouched && (
                                 <Box pt={1.5}>
@@ -177,19 +211,25 @@ function Signup({ onLogin }) {
                                             t('signup.passwordRules')
                                         }
                                         multiline
-                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: 2 }}
+                                        style={{ fontSize: 14, lineHeight: 1.75, height: "78px", borderRadius: '15px' }}
                                     />
                                 </Box>
                             )}
                         </>
                     )}
                     <Box pt={3}>
-                        <Button
+                    <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            color="primary"
-                            style={{ height: "52px", borderRadius: 2, textTransform: 'none', fontSize: '16px' }}
+                            disabled={isLoading}
+                            sx={{
+                                height: '52px',
+                                borderRadius: '30px',
+                                textTransform: 'none',
+                                fontSize: '16px',
+                                bgcolor: 'primary.main',
+                            }}
                         >
                             {t('signup.continue')}
                         </Button>
@@ -197,7 +237,7 @@ function Signup({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             {t('signup.alreadyHaveAccount')}{' '}
-                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500  }}>
                                 {t('signup.logIn')}
                             </Link>
                         </Typography>
