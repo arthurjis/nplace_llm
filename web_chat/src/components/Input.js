@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { IconButton, TextField, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SendIcon from '@mui/icons-material/Send';
+import { useTranslation } from 'react-i18next';
+
 
 
 function Input({ onSendMessage, handleMenuClick }) {
   const [message, setMessage] = useState('');
   const [inputActive, setInputActive] = useState(false);
+  const { t, i18n } = useTranslation();
   const handleSubmit = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
       return;
@@ -59,7 +62,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleSubmit}
         multiline
-        placeholder="Type your message......"   // To finetune
+        placeholder={t('input.typeYourMessage')} // To finetune
         variant="outlined"
         fullWidth
         minRows={1}

@@ -1,8 +1,12 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import ChatSessionList from './ChatSessionList';
+import { useTranslation } from 'react-i18next';
+
 
 function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userEmail }) {
+    const { t, i18n } = useTranslation();
+
     return (
         <div className="side-panel"
             style={{
@@ -38,7 +42,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                     backgroundColor: 'primary.light',
                 }}
             >
-                Start Chat
+                {t('sidePanel.startNewChat')}
             </Button>
 
             <Button
@@ -57,7 +61,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                     backgroundColor: 'primary.light',
                 }}
             >
-                Log out
+                {t('sidePanel.logOut')}
             </Button>
         </div>
     );
