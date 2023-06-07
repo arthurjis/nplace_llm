@@ -31,19 +31,18 @@ function Input({ onSendMessage, handleMenuClick }) {
         flexDirection: 'row',
         alignItems: 'stretch',
         justifyContent: 'space-between',
-        margin: '0.5em 1.5em 0.5em',   // To finetune
+        margin: '20px 40px 20px', // Finetune
         borderStyle: 'none',
-        borderRadius: '24pt',   // To finetune
-        // backgroundColor: '#F4E8D9',   // To finetune
-        backgroundColor: 'primary.main',   // To finetune
+        borderRadius: '30px', // Finetune
+        backgroundColor: 'primary.light', // Finetune
       }}
     >
       <IconButton
         onClick={handleMenuClick}
         disableRipple
         sx={{
-          color: 'black',   // To finetune
-          ml: '8px',   // To finetune
+          color: 'primary.contrastText', // Finetune
+          ml: '8px',   // Finetune
           alignSelf: 'flex-end',
           mb: '1px',
           transform: inputActive ? 'none' : 'none',
@@ -64,7 +63,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         variant="outlined"
         fullWidth
         minRows={1}
-        maxRows={10}   // To finetune
+        maxRows={10}   // Finetune
         sx={{
           '& .MuiOutlinedInput-root': {
             backgroundColor: 'transparent',
@@ -74,27 +73,27 @@ function Input({ onSendMessage, handleMenuClick }) {
             },
           },
           '& .MuiInputBase-input': {
-            fontWeight: '500',   // To finetune
+            fontWeight: '500',   // Finetune
             fontSize: '1em',
-            color: 'black',   // To finetune
+            color: 'text.primary',   // Finetune
             padding: '0px',
             '&::placeholder': {
-              color: 'gray',   // To finetune
+              color: 'text.secondary',   // Finetune
             },
           },
           '& .MuiInputBase-inputMultiline': {
             lineHeight: 'normal',
             whiteSpace: 'pre-wrap',
-            padding: '12px 12px',   // To finetune
+            padding: '12px 12px',   // Finetune
           },
         }}
       />
       <IconButton type="submit"
         disableRipple
         sx={{
-          color: 'black',   // To finetune
-          mr: '8px',   // To finetune
-          mb: '1px',
+          color: 'primary.contrastText', // Finetune
+          mr: '8px', // Finetune
+          mb: '1px', // Finetune
           alignSelf: 'flex-end',
         }}
       >
