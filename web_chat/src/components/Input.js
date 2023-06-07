@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, TextField, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SendIcon from '@mui/icons-material/Send';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 
 
 function Input({ onSendMessage, handleMenuClick }) {
   const [message, setMessage] = useState('');
   const [inputActive, setInputActive] = useState(false);
+  const { lang } = useParams();
+  const validLanguages = ['en', 'zh'];
+  const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
   const { t, i18n } = useTranslation();
   const handleSubmit = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
@@ -24,6 +28,10 @@ function Input({ onSendMessage, handleMenuClick }) {
   const handleBlur = () => {
     setInputActive(false);
   }
+  // Change language based on the URL parameter
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language, i18n]);
 
   return (
     <Box
