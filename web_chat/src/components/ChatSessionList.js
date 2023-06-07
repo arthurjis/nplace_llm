@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import Box from '@mui/material/Box';
 import ChatSessionItem from './ChatSessionItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
 function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
@@ -14,15 +16,15 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         'Authorization': `Bearer ${token}`
       }
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log(`Received ${data.chat_sessions.length} chat sessions`);
-      console.log(data.chat_sessions);
-      setChatSessions(data.chat_sessions);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        console.log(`Received ${data.chat_sessions.length} chat sessions`);
+        console.log(data.chat_sessions);
+        setChatSessions(data.chat_sessions);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }, [token]);
 
   useEffect(() => {
@@ -33,12 +35,28 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
       <List component="nav" aria-label="chat sessions">
         {chatSessions.map(chatSession => (
-          <ListItem button key={chatSession.id}>
-            <ChatSessionItem 
-              chatSession={chatSession} 
+          <ListItemButton
+            key={chatSession.id}
+            sx={{
+              height: '44px',
+              marginBottom: '10px',
+              alignSelf: 'flex-start',
+              borderRadius: '15px',
+            }}
+          >
+            <ListItemIcon>
+              <ChatBubbleOutlineIcon
+                sx={{
+                  fontSize: '20px',
+                  color: 'primary.main.contrastText',
+                }}
+              />
+            </ListItemIcon>
+            <ChatSessionItem
+              chatSession={chatSession}
               onSelect={onChatSessionSelect}
             />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </Box>
