@@ -10,7 +10,7 @@ import { Box } from '@mui/material';
 function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
-  const messagesRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (selectedChatSession) {
@@ -54,10 +54,10 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   }, [socket, setSelectedChatSession]);
 
   useEffect(() => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
+    // Scroll to bottom when new messages arrive
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
 
   function handleSendMessage(messageText) {
     // Add the user's message to the chat
@@ -93,25 +93,46 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         alignItems: 'stretch',
         height: '100%',
         width: '100%',
-        borderRadius: '10px',   // To finetune
-        backgroundColor: 'white',   // To finetune
-        overflowY: 'hidden',
+        borderRadius: '30px',   // Finetune
+        backgroundColor: 'chatPanelBG',   // Finetune
       }}
     >
       <Box
         sx={{
-          flexGrow: 1,
+          position: 'relative',
           overflow: 'auto',
+          flex: '1 1 auto',
           p: 2,
-          border: 2,
-          borderStyle: 'dashed',
-          borderColor: 'gray',
+          display: 'flex',
+          flexDirection: 'column-reverse',
         }}
       >
-        {messages.map((message, index) => (
-          <Message key={index} message={message} isLocal={message.isLocal} />
-        ))}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+          }}
+        >
+          {messages.map((message, index) => (
+            <Message key={index} message={message} isLocal={message.isLocal} likedByRemote={true} />
+          ))}
+          <div ref={messagesEndRef} />
+        </Box>
       </Box>
+
+
+      {/* <Box
+        sx={{
+          overflow: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      > */}
+
+      {/* </Box> */}
+      {/* <Box sx={{ flexGrow: 1 }} /> */}
       <Input className="chat-input"
         onSendMessage={handleSendMessage}
         handleMenuClick={handleDrawerToggle}
