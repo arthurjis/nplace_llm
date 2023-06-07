@@ -15,7 +15,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
 
             }}
         >
-            <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt' }}>
+            <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt', flexDirection: 'column', flexGrow: 1}}>
                 <ChatSessionList
                     token={token}
                     onChatSessionSelect={onChatSessionSelect}
