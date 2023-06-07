@@ -102,6 +102,22 @@ function Signup({ onLogin }) {
                                 }}
                                 error={!!emailError}
                                 helperText={<HelperText error={!!emailError}>{emailError}</HelperText>}
+                                sx={{
+                                    '.MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'primary.dark',
+                                        },
+                                    },
+                                    '.MuiInputLabel-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                    '.MuiInputLabel-root.Mui-focused': {
+                                        color: 'primary.contrastText',
+                                    },
+                                }}
                             />
                         </>
                     ) : (
@@ -168,6 +184,22 @@ function Signup({ onLogin }) {
 
                                 }}
                                 error={!!passwordError}
+                                sx={{
+                                    '.MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderColor: 'primary.main',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'primary.dark',
+                                        },
+                                    },
+                                    '.MuiInputLabel-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                    '.MuiInputLabel-root.Mui-focused': {
+                                        color: 'primary.contrastText',
+                                    },
+                                }}
                             />
                             {passwordTouched && (
                                 <Box pt={1.5}>
@@ -186,13 +218,18 @@ function Signup({ onLogin }) {
                         </>
                     )}
                     <Box pt={3}>
-                        <Button
+                    <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            color="primary"
                             disabled={isLoading}
-                            style={{ height: "52px", borderRadius: 2, textTransform: 'none', fontSize: '16px' }}
+                            sx={{
+                                height: '52px',
+                                borderRadius: '2pt',
+                                textTransform: 'none',
+                                fontSize: '16px',
+                                bgcolor: 'primary.main',
+                            }}
                         >
                             {t('signup.continue')}
                         </Button>
@@ -200,7 +237,7 @@ function Signup({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             {t('signup.alreadyHaveAccount')}{' '}
-                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none' }}>
+                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500  }}>
                                 {t('signup.logIn')}
                             </Link>
                         </Typography>
