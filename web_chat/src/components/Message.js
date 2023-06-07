@@ -87,17 +87,19 @@ function Message({ message, isLocal, likedByRemote }) {
             component="p"
             align="left"
             sx={{
-              m: 0,  // Finetune
-              fontWeight: 500,  // Finetune
-              fontSize: '1em',  // Finetune
+              m: 0,
+              fontWeight: 500,
+              fontSize: '1em',
               whiteSpace: 'pre-wrap',
-            }}>
-            {message.text.split('\n').map((line, index) => (
+            }}
+          >
+            {message.text.split('\n').map((line, index, arr) => (
               <span key={index}>
                 {line}
-                <br />
+                {index !== arr.length - 1 && <br />}
               </span>
-            ))}          </Typography>
+            ))}
+          </Typography>
         </Box>
       </Box>
 
