@@ -11,9 +11,11 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 display: 'flex',
                 flexDirection: 'column',
                 borderRadius: '30px',
+                padding: '0pt 16pt'
+
             }}
         >
-            <div style={{ overflow: 'auto', marginBottom: '10pt' }}>
+            <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt' }}>
                 <ChatSessionList
                     token={token}
                     onChatSessionSelect={onChatSessionSelect}
@@ -25,9 +27,9 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 variant="contained"
                 onClick={handleStartChat}
                 style={{
-                    width: '90%',
-                    margin: 'auto 10pt 0pt 10pt',
-                    height: '32pt',
+                    width: '100%',
+                    marginTop: 'auto',
+                    height: '44px',
                     borderRadius: '15px',
                     textTransform: 'none',
                     fontSize: '16px',
@@ -43,9 +45,10 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 variant="contained"
                 onClick={handleLogout}
                 style={{
-                    width: '90%',
-                    margin: '10pt 10pt 15pt 10pt',
-                    height: '32pt',
+                    width: '100%',
+                    marginTop: '10px',
+                    marginBottom: '20px',
+                    height: '44px',
                     borderRadius: '15px',
                     textTransform: 'none',
                     fontSize: '16px',
