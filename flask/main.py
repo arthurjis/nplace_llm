@@ -56,7 +56,7 @@ def login():
     if not user or not check_password_hash(user.passcode, passcode):
         app.logger.debug("Failed user login, user ID: {}".format(id))
         return jsonify({"msg": "Bad id or passcode"}), 401
-    access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(hours=1)) 
+    access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(seconds=30)) 
     
     app.logger.debug("Successful user login, user ID: {}".format(id))
     return jsonify(access_token=access_token)
@@ -131,7 +131,7 @@ def send_message(data):
     if not chat_session or user_id not in [user.user_id for user in chat_session.users]:
         return jsonify({"msg": "Chat session not found"}), 400
 
-    chat_session.last_opened = datetime.utcnow()
+    chat_session.last_opened = datetime.datetime.utcnow()
     user_message = ChatMessages(sender_id=user_id, sender_type='user', chat_session_id=chat_session.id, message=message_text)
     db.session.add(user_message)
     db.session.commit()
@@ -194,7 +194,6 @@ def chat_history(session_id):
 
     app.logger.debug("Success to retrieve chat history for chat session {}, user ID: {}".format(session_id, user_id))
     return jsonify({"messages": messages_dict})
-
 
 
 if __name__ == '__main__':

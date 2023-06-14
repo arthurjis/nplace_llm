@@ -19,7 +19,22 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           'Authorization': `Bearer ${token}`
         }
       })
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            if (response.status === 401) {
+              // TODO: Handle 401 status (bad token)
+              throw new Error("Unauthorized");
+            } else if (response.status === 403) {
+              // TODO: Handle 403 status (forbidden)
+              throw new Error("You are not authorized to view this chat session.");
+            } else if (response.status === 404) {
+              // TODO: Handle 404 status (not found)
+              throw new Error("The chat session you're trying to access was not found.");
+            }
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
         .then(data => {
           setMessages(data.messages);
         })
