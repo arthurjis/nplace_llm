@@ -2,18 +2,17 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 from sqlalchemy import desc, asc
 from dotenv import load_dotenv
-from datetime import datetime
 from functools import wraps
 from database import db
 
 from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 
 import simple_gpt_chatbot
+import datetime
 import logging
 import os
 
@@ -45,7 +44,7 @@ def create_tables():
         db.create_all()
 
 create_tables()
-current_time = datetime.now().time()
+current_time = datetime.datetime.now().time()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 @app.route('/')
@@ -64,7 +63,7 @@ def login():
     if not user or not check_password_hash(user.passcode, passcode):
         return jsonify({"msg": "Bad id or passcode"}), 401
 
-    access_token = create_access_token(identity=id)
+    access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(hours=1)) 
     return jsonify(access_token=access_token)
 
 @app.route('/register', methods=['POST'])
@@ -154,7 +153,7 @@ def send_message(data):
     emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbots.name, 'isLocal': False}, room=request.sid)
 
 @app.route('/chat_sessions', methods=['GET'])
-@jwt_required_wraps  # Change this line
+@jwt_required()
 def chat_sessions():
     user_id = get_jwt_identity()
     if user_id:
@@ -175,7 +174,7 @@ def chat_sessions():
     return jsonify({"msg": "No chat sessions found"}), 404
 
 @app.route('/chat_history/<int:session_id>', methods=['GET'])
-@jwt_required_wraps
+@jwt_required()
 def chat_history(session_id):
     # Get the user's identity from the JWT
     user_id = get_jwt_identity()
