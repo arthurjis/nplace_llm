@@ -22,25 +22,22 @@ def jwt_required_wraps(func):
         return func(*args, **kwargs)
     return wrapped
 
+def create_tables():
+    with app.app_context():
+        db.create_all()
+
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-
 app.logger.setLevel(logging.DEBUG)
-
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
 socketio = SocketIO(app, cors_allowed_origins=allowed_origins, async_mode='gevent', logger=True, engineio_logger=True)
 CORS(app, origins=allowed_origins)
 jwt = JWTManager(app)
 db.init_app(app)
-
-def create_tables():
-    with app.app_context():
-        db.create_all()
-
 create_tables()
 current_time = datetime.datetime.now().time()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -54,32 +51,31 @@ def index():
 def login():
     id = request.json.get('email', None)
     passcode = request.json.get('password', None)
-    app.logger.debug("Received POST to login user: {}".format(id))
 
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
-
     if not user or not check_password_hash(user.passcode, passcode):
+        app.logger.debug("Failed user login, user ID: {}".format(id))
         return jsonify({"msg": "Bad id or passcode"}), 401
-
     access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(hours=1)) 
+    
+    app.logger.debug("Successful user login, user ID: {}".format(id))
     return jsonify(access_token=access_token)
 
 @app.route('/register', methods=['POST'])
 def register():
     id = request.json.get('email', None)
     passcode = generate_password_hash(request.json.get('password', None))
-    app.logger.debug("Received POST to register user: {}".format(id))
 
     # Check if user already exists
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
-
     if user:
+        app.logger.debug("Failed user registration, user already exists, attempted ID: {}".format(id))
         return jsonify({"msg": "User already exists"}), 400
-
     new_user = Users(id=id, passcode=passcode)
     db.session.add(new_user)
     db.session.commit()
 
+    app.logger.debug("Successful user registration, user ID: {}".format(id))
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
@@ -89,7 +85,7 @@ def start_chat(data):
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
     except Exception as e:
-        emit('error', {'error': 'Invalid token'})
+        emit('error', {'error': 'Invalid token', 'code': 'INVALID_TOKEN'})
         return
     user = db.session.get(Users, user_id)
     if not user:
@@ -154,46 +150,49 @@ def send_message(data):
 @jwt_required()
 def chat_sessions():
     user_id = get_jwt_identity()
-    if user_id:
-        user = db.session.get(Users, user_id)
-        if user:
-            # Fetch user's chat sessions and order them by last_opened
-            chat_sessions = db.session.query(ChatSessions).\
-                join(SessionUsers).\
-                filter(SessionUsers.user_id == user_id).\
-                order_by(desc(ChatSessions.last_opened)).\
-                all()
+    if not user_id:
+        app.logger.debug("Failed to retrieve chat session, bad user ID: {}".format(user_id))
+        return jsonify({"msg": "No chat sessions found"}), 404
 
-            # Extract chat session names, ids, and last_opened timestamps
-            result = [{'id': cs.id, 'name': cs.name, 'last_opened': cs.last_opened} for cs in chat_sessions]
-            app.logger.debug("Retrieved {} chat sessions from user {}".format(len(result), user_id))
-            return jsonify({"chat_sessions": result})
+    user = db.session.get(Users, user_id)
+    if not user:
+        app.logger.debug("Failed to retrieve chat session, user not found, user ID: {}".format(user_id))
+        return jsonify({"msg": "No chat sessions found"}), 404        
 
-    return jsonify({"msg": "No chat sessions found"}), 404
+    # Fetch user's chat sessions and order them by last_opened
+    chat_sessions = db.session.query(ChatSessions).\
+        join(SessionUsers).\
+        filter(SessionUsers.user_id == user_id).\
+        order_by(desc(ChatSessions.last_opened)).\
+        all()
+
+    # Extract chat session names, ids, and last_opened timestamps
+    result = [{'id': cs.id, 'name': cs.name, 'last_opened': cs.last_opened} for cs in chat_sessions]
+    app.logger.debug("Success to retrieve {} chat sessions, user ID {}".format(len(result), user_id))
+    return jsonify({"chat_sessions": result})
 
 @app.route('/chat_history/<int:session_id>', methods=['GET'])
 @jwt_required()
 def chat_history(session_id):
-    # Get the user's identity from the JWT
     user_id = get_jwt_identity()
+    if not user_id:
+        app.logger.debug("Failed to retrieve chat history, bad user ID: {}".format(user_id))
+        return jsonify({"msg": "No chat sessions found"}), 404
 
-    # Get the chat session from the database
     chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
-
     if not chat_session:
+        app.logger.debug("Failed to retrieve chat history for chat session {}, user ID: {}".format(session_id, user_id))
         return jsonify({"msg": "Chat session not found"}), 404
-
+    
     # Verify the requesting user is part of this chat session
     if user_id not in [user.user_id for user in chat_session.users]:
+        app.logger.debug("Failed to retrieve chat history for chat session {}, user ID: {}. User not part of this chat session".format(session_id, user_id))
         return jsonify({"msg": "Unauthorized"}), 403
 
-    # Get the chat history for this chat session
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
-
-    # Convert each message to a dictionary format for JSON response
     messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages];
-    print(messages_dict)
 
+    app.logger.debug("Success to retrieve chat history for chat session {}, user ID: {}".format(session_id, user_id))
     return jsonify({"messages": messages_dict})
 
 
