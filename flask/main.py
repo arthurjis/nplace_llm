@@ -28,7 +28,7 @@ def jwt_required_wraps(func):
 load_dotenv()
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'your-secret-key'    #TODO set secret key
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 app.logger.setLevel(logging.DEBUG)
