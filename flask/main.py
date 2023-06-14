@@ -85,19 +85,22 @@ def start_chat(data):
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
     except Exception as e:
+        app.logger.debug("Failed to start chat, failed to decode token")
         emit('error', {'error': 'Invalid token', 'code': 'INVALID_TOKEN'})
         return
     user = db.session.get(Users, user_id)
     if not user:
-        return jsonify({"msg": "User not found"}), 400
+        app.logger.debug("Failed to start chat, failed to get user from db, user ID {}".format(user_id))
+        emit('error', {'error': 'User not found', 'code': 'USER_NOT_FOUND'})  
+        return 
 
     chat_session = ChatSessions()
     db.session.add(chat_session)
     db.session.commit()
-
     session_user = SessionUsers(user_id=user.id, chat_session_id=chat_session.id)
     db.session.add(session_user)
 
+    # TODO: Only using one chatbot for everything now...
     chatbot = db.session.query(Chatbots).first()
     if not chatbot:
         chatbot = Chatbots(name="chatbot1")
@@ -107,8 +110,8 @@ def start_chat(data):
     session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
     db.session.add(session_chatbot)
     db.session.commit()
+    app.logger.debug("Success in starting chat session {} for user {}".format(chat_session.id, user_id))
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
-    app.logger.debug("Starting chat session {} for room {}".format(chat_session.id, request.sid))
     return {'chat_session_id': chat_session.id}
 
 @socketio.on('send_message')
@@ -118,18 +121,23 @@ def send_message(data):
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
     except Exception as e:
-        emit('error', {'error': 'Invalid token'})
+        app.logger.debug("Failed to send message, failed to decode token")
+        emit('error', {'error': 'Invalid token', 'code': 'INVALID_TOKEN'})
         return
     user = db.session.get(Users, user_id)
     if not user:
-        return jsonify({"msg": "User not found"}), 400
-
+        app.logger.debug("Failed to send message, failed to get user from db, user ID {}".format(user_id))
+        emit('error', {'error': 'User not found', 'code': 'USER_NOT_FOUND'})  
+        return 
+    
     chat_session_id = data['chat_session_id']
     message_text = data['text']
 
     chat_session = db.session.execute(db.select(ChatSessions).filter_by(id=chat_session_id)).scalar_one_or_none()
     if not chat_session or user_id not in [user.user_id for user in chat_session.users]:
-        return jsonify({"msg": "Chat session not found"}), 400
+        app.logger.debug("Failed to send message, failed to get valid chat session from db, user ID {}, chat session ID {}".format(user_id, chat_session_id))
+        emit('error', {'error': 'Chat session not found', 'code': 'CHAT_SESSION_NOT_FOUND'})  
+        return 
 
     chat_session.last_opened = datetime.datetime.utcnow()
     user_message = ChatMessages(sender_id=user_id, sender_type='user', chat_session_id=chat_session.id, message=message_text)

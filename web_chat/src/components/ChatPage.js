@@ -42,10 +42,15 @@ const ChatPage = ({ token, onLogout }) => {
         // Initialize socket connection here
         const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
             query: { token }
+        }); 
+        newSocket.on('error', function (error) {
+            // Handle the error here.
+            console.error('Error:', error);
         });
         setSocket(newSocket);
         // Return function to clean up socket connection on unmount
         return () => {
+            newSocket.off('error');
             newSocket.close();
         };
     }, [token]);
