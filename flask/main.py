@@ -1,15 +1,13 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
+from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-
 from sqlalchemy import desc, asc
 from dotenv import load_dotenv
 from functools import wraps
 from database import db
-
-from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 
 import simple_gpt_chatbot
 import datetime
