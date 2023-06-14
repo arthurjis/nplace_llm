@@ -33,8 +33,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 app.logger.setLevel(logging.DEBUG)
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', logger=True, engineio_logger=True)
-CORS(app)
+allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
+socketio = SocketIO(app, cors_allowed_origins=allowed_origins, async_mode='gevent', logger=True, engineio_logger=True)
+CORS(app, origins=allowed_origins)
 jwt = JWTManager(app)
 db.init_app(app)
 
