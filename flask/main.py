@@ -1,4 +1,5 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
@@ -56,11 +57,11 @@ def index():
 def login():
     id = request.json.get('email', None)
     passcode = request.json.get('password', None)
-    app.logger.debug("Received POST to login user: {} with passcode: {}".format(id, passcode))
+    app.logger.debug("Received POST to login user: {}".format(id))
 
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
 
-    if not user or user.passcode != passcode:
+    if not user or not check_password_hash(user.passcode, passcode):
         return jsonify({"msg": "Bad id or passcode"}), 401
 
     access_token = create_access_token(identity=id)
@@ -69,8 +70,8 @@ def login():
 @app.route('/register', methods=['POST'])
 def register():
     id = request.json.get('email', None)
-    passcode = request.json.get('password', None)
-    app.logger.debug("Received POST to register user: {} with passcode: {}".format(id, passcode))
+    passcode = generate_password_hash(request.json.get('password', None))
+    app.logger.debug("Received POST to register user: {}".format(id))
 
     # Check if user already exists
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
