@@ -12,6 +12,9 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    if (!token){
+      return;
+    }
     if (selectedChatSession) {
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {

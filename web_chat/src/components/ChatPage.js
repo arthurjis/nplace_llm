@@ -35,6 +35,7 @@ const ChatPage = ({ token, onLogout }) => {
     };
     useEffect(() => {
         if (!token) {
+            console.log("Token not found, redirecting to login...")
             navigate("/login");
         }
     }, [token, navigate]);
@@ -46,6 +47,9 @@ const ChatPage = ({ token, onLogout }) => {
         newSocket.on('error', function (error) {
             // Handle the error here.
             console.error('Error:', error);
+            if (error.code == 'INVALID_TOKEN') {
+                onLogout();
+            }
         });
         setSocket(newSocket);
         // Return function to clean up socket connection on unmount

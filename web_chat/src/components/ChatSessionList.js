@@ -12,6 +12,9 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
   const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
+    if (!token) {
+      return;
+    }
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
       headers: {
         'Authorization': `Bearer ${token}`

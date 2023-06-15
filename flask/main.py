@@ -54,11 +54,11 @@ def login():
 
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
     if not user or not check_password_hash(user.passcode, passcode):
-        app.logger.debug("Failed user login, user ID: {}".format(id))
+        app.logger.error("Failed user login, user ID: {}".format(id))
         return jsonify({"msg": "Bad id or passcode"}), 401
     access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(seconds=30)) 
     
-    app.logger.debug("Successful user login, user ID: {}".format(id))
+    app.logger.info("Successful user login, user ID: {}".format(id))
     return jsonify(access_token=access_token)
 
 @app.route('/register', methods=['POST'])
@@ -69,13 +69,13 @@ def register():
     # Check if user already exists
     user = db.session.execute(db.select(Users).filter_by(id=id)).scalar_one_or_none()
     if user:
-        app.logger.debug("Failed user registration, user already exists, attempted ID: {}".format(id))
+        app.logger.error("Failed user registration, user already exists, attempted ID: {}".format(id))
         return jsonify({"msg": "User already exists"}), 400
     new_user = Users(id=id, passcode=passcode)
     db.session.add(new_user)
     db.session.commit()
 
-    app.logger.debug("Successful user registration, user ID: {}".format(id))
+    app.logger.info("Successful user registration, user ID: {}".format(id))
     return jsonify({"msg": "User created"}), 201
 
 @socketio.on('start_chat')
@@ -85,12 +85,12 @@ def start_chat(data):
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
     except Exception as e:
-        app.logger.debug("Failed to start chat, failed to decode token")
+        app.logger.error("Failed to start chat, failed to decode token")
         emit('error', {'error': 'Invalid token', 'code': 'INVALID_TOKEN'})
         return
     user = db.session.get(Users, user_id)
     if not user:
-        app.logger.debug("Failed to start chat, failed to get user from db, user ID {}".format(user_id))
+        app.logger.error("Failed to start chat, failed to get user from db, user ID {}".format(user_id))
         emit('error', {'error': 'User not found', 'code': 'USER_NOT_FOUND'})  
         return 
 
@@ -110,7 +110,7 @@ def start_chat(data):
     session_chatbot = SessionChatbots(chatbot_id=chatbot.id, chat_session_id=chat_session.id)
     db.session.add(session_chatbot)
     db.session.commit()
-    app.logger.debug("Success in starting chat session {} for user {}".format(chat_session.id, user_id))
+    app.logger.info("Success in starting chat session {} for user {}".format(chat_session.id, user_id))
     emit('chat_session_started', {'chat_session_id': chat_session.id}, room=request.sid)
     return {'chat_session_id': chat_session.id}
 
@@ -121,12 +121,12 @@ def send_message(data):
         decoded_token = decode_token(token)
         user_id = decoded_token['sub']
     except Exception as e:
-        app.logger.debug("Failed to send message, failed to decode token")
+        app.logger.error("Failed to send message, failed to decode token")
         emit('error', {'error': 'Invalid token', 'code': 'INVALID_TOKEN'})
         return
     user = db.session.get(Users, user_id)
     if not user:
-        app.logger.debug("Failed to send message, failed to get user from db, user ID {}".format(user_id))
+        app.logger.error("Failed to send message, failed to get user from db, user ID {}".format(user_id))
         emit('error', {'error': 'User not found', 'code': 'USER_NOT_FOUND'})  
         return 
     
@@ -135,7 +135,7 @@ def send_message(data):
 
     chat_session = db.session.execute(db.select(ChatSessions).filter_by(id=chat_session_id)).scalar_one_or_none()
     if not chat_session or user_id not in [user.user_id for user in chat_session.users]:
-        app.logger.debug("Failed to send message, failed to get valid chat session from db, user ID {}, chat session ID {}".format(user_id, chat_session_id))
+        app.logger.error("Failed to send message, failed to get valid chat session from db, user ID {}, chat session ID {}".format(user_id, chat_session_id))
         emit('error', {'error': 'Chat session not found', 'code': 'CHAT_SESSION_NOT_FOUND'})  
         return 
 
@@ -159,12 +159,12 @@ def send_message(data):
 def chat_sessions():
     user_id = get_jwt_identity()
     if not user_id:
-        app.logger.debug("Failed to retrieve chat session, bad user ID: {}".format(user_id))
+        app.logger.error("Failed to retrieve chat session, bad user ID: {}".format(user_id))
         return jsonify({"msg": "No chat sessions found"}), 404
 
     user = db.session.get(Users, user_id)
     if not user:
-        app.logger.debug("Failed to retrieve chat session, user not found, user ID: {}".format(user_id))
+        app.logger.error("Failed to retrieve chat session, user not found, user ID: {}".format(user_id))
         return jsonify({"msg": "No chat sessions found"}), 404        
 
     # Fetch user's chat sessions and order them by last_opened
@@ -184,17 +184,17 @@ def chat_sessions():
 def chat_history(session_id):
     user_id = get_jwt_identity()
     if not user_id:
-        app.logger.debug("Failed to retrieve chat history, bad user ID: {}".format(user_id))
+        app.logger.error("Failed to retrieve chat history, bad user ID: {}".format(user_id))
         return jsonify({"msg": "No chat sessions found"}), 404
 
     chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
     if not chat_session:
-        app.logger.debug("Failed to retrieve chat history for chat session {}, user ID: {}".format(session_id, user_id))
+        app.logger.error("Failed to retrieve chat history for chat session {}, user ID: {}".format(session_id, user_id))
         return jsonify({"msg": "Chat session not found"}), 404
     
     # Verify the requesting user is part of this chat session
     if user_id not in [user.user_id for user in chat_session.users]:
-        app.logger.debug("Failed to retrieve chat history for chat session {}, user ID: {}. User not part of this chat session".format(session_id, user_id))
+        app.logger.error("Failed to retrieve chat history for chat session {}, user ID: {}. User not part of this chat session".format(session_id, user_id))
         return jsonify({"msg": "Unauthorized"}), 403
 
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
