@@ -7,32 +7,48 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
-function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
+function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal, handleLogout }) {
   const [chatSessions, setChatSessions] = useState([]);
   const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
+    if (!token) {
+      return;
+    }
     fetch(process.env.REACT_APP_SERVER_URL + '/chat_sessions', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            // TODO: Handle 401 status (bad token)
+            handleLogout();
+            throw new Error("Unauthorized");
+          } else if (response.status === 404) {
+            // TODO: Handle 404 status (not found)
+            throw new Error("The chat session you're trying to access was not found.");
+          }
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
       .then(data => {
-        console.log(`Received ${data.chat_sessions.length} chat sessions`);
-        console.log(data.chat_sessions);
+        console.debug(`Received ${data.chat_sessions.length} chat sessions`);
+        console.debug(data.chat_sessions);
         setChatSessions(data.chat_sessions);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, [token]);
+  }, [token, handleLogout]);
 
   const onSelectSession = (chatSession) => {
-    console.log(chatSession);
+    console.debug("Selected chat session " + chatSession);
     setSelectedChatSessionID(chatSession);
     onChatSessionSelect(chatSession);
-};
+  };
 
   useEffect(() => {
     fetchChatSessions();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
 import ChatPanel from './ChatPanel';
@@ -16,14 +16,17 @@ const ChatPage = ({ token, onLogout }) => {
     const [selectedChatSession, setSelectedChatSession] = useState(null);
     const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
     const navigate = useNavigate();
-    const handleLogout = () => {
-        if (socket) {
-            socket.close();
-            setSocket(null);
-        }
+    const handleLogout = useCallback(() => {
+        setSocket((prevSocket) => {
+            if (prevSocket) {
+              prevSocket.close();
+              return null;
+            }
+            return prevSocket;
+          });
         setSelectedChatSession(null);
         onLogout();
-    };
+    }, [onLogout]);
     const handleStartChat = () => {
         setSelectedChatSession(null);
     };
@@ -35,6 +38,7 @@ const ChatPage = ({ token, onLogout }) => {
     };
     useEffect(() => {
         if (!token) {
+            console.log("Token not found, redirecting to login...")
             navigate("/login");
         }
     }, [token, navigate]);
@@ -42,13 +46,21 @@ const ChatPage = ({ token, onLogout }) => {
         // Initialize socket connection here
         const newSocket = socketIOClient(process.env.REACT_APP_SERVER_URL, {
             query: { token }
+        }); 
+        newSocket.on('error', function (error) {
+            // Handle the error here.
+            console.error('Error:', error);
+            if (error.code === 'INVALID_TOKEN') {
+                handleLogout();
+            }
         });
         setSocket(newSocket);
         // Return function to clean up socket connection on unmount
         return () => {
+            newSocket.off('error');
             newSocket.close();
         };
-    }, [token]);
+    }, [token, handleLogout]);
     useEffect(() => {
         if (socket) {
             console.log("Socket initialized");
@@ -182,6 +194,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     setSelectedChatSession={setSelectedChatSession}
                                     refreshChatSessions={handleRefreshChatSessions}
                                     handleDrawerToggle={handleDrawerToggle}
+                                    handleLogout={handleLogout}
                                 />
                             </Box>
                         </Box>

@@ -51,7 +51,7 @@ function Login({ onLogin }) {
                 onLogin(response.data.access_token);
                 navigate('/chat');
             } catch (error) {
-                if (error.response.data.msg === 'Bad id or passcode') {
+                if (error.response.data.msg === 'Bad username or passcode') {
                     setLoginError(t('login.loginError'));
                 } else {
                     console.error(error);

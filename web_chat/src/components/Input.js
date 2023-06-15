@@ -18,7 +18,6 @@ function Input({ onSendMessage, handleMenuClick }) {
     if (e.key === 'Enter' && e.shiftKey) {
       return;
     }
-    console.log(message);
     if ((e.key === 'Enter' || e.type === 'submit') && message.trim() !== '') {
       e.preventDefault();
       onSendMessage(message);
@@ -47,6 +46,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         borderStyle: 'none',
         borderRadius: '30px', // Finetune
         backgroundColor: 'primary.light', // Finetune
+        height: '47px',
       }}
     >
       <IconButton
@@ -56,7 +56,7 @@ function Input({ onSendMessage, handleMenuClick }) {
           color: 'primary.contrastText', // Finetune
           ml: '8px',   // Finetune
           alignSelf: 'flex-end',
-          mb:  '3px',
+          mb:  '4px',
           transform: inputActive ? 'none' : 'none',
           // transform: inputActive ? 'translateX(-100%)' : 'none',
           // transition: 'transform 0.3s ease-out',
@@ -105,7 +105,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         sx={{
           color: 'primary.contrastText', // Finetune
           mr: '8px', // Finetune
-          mb: '3px', // Finetune
+          mb: '4px', // Finetune
           alignSelf: 'flex-end',
         }}
       >

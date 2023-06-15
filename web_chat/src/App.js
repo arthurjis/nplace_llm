@@ -10,7 +10,7 @@ import './App.css';
 
 
 function App() {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
 
   const handleLogin = (token) => {
     setToken(token);

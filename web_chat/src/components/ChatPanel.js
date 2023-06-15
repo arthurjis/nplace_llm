@@ -6,12 +6,15 @@ import { Box } from '@mui/material';
 
 
 
-function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle }) {
+function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle, handleLogout }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    if (!token){
+      return;
+    }
     if (selectedChatSession) {
       // Load chat history from the server
       fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
@@ -19,7 +22,23 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           'Authorization': `Bearer ${token}`
         }
       })
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            if (response.status === 401) {
+              // TODO: Handle 401 status (bad token)
+              handleLogout();
+              throw new Error("Unauthorized");
+            } else if (response.status === 403) {
+              // TODO: Handle 403 status (forbidden)
+              throw new Error("You are not authorized to view this chat session.");
+            } else if (response.status === 404) {
+              // TODO: Handle 404 status (not found)
+              throw new Error("The chat session you're trying to access was not found.");
+            }
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
         .then(data => {
           setMessages(data.messages);
         })
@@ -30,7 +49,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
     else {
       setMessages([]);
     }
-  }, [selectedChatSession, token]);
+  }, [selectedChatSession, token, handleLogout]);
 
   useEffect(() => {
     // Listen for new messages from the server
