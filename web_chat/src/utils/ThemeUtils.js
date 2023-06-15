@@ -19,8 +19,9 @@ const theme = createTheme({
     background: {
       light: '#e1e1e1',
       dark: '#000000',
+      sidePanel: '#f6ebbe',
+      chatPanel: '#fcfaf5',
     },
-    chatPanelBG: '#fcfaf5',
     liked: {
       main: 'red',
     },

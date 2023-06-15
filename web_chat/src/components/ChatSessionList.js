@@ -55,7 +55,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
   }, [token, refreshChatSessionsSignal, fetchChatSessions]);
 
   return (
-    <Box sx={{ width: '100%', bgcolor: '#f6ebbe' }}>
+    <Box sx={{ width: '100%', bgcolor: 'background.sidePanel' }}>
       <List component="nav" aria-label="chat sessions">
         {chatSessions.map(chatSession => (
           <ListItemButton

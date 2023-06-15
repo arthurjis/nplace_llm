@@ -4,6 +4,7 @@ import ChatSessionList from './ChatSessionList';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 
 
@@ -19,15 +20,17 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
     }, [language, i18n]);
 
     return (
-        <div className="side-panel"
+        <Box
             style={{
-                backgroundColor: '#f6ebbe',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 borderRadius: '30px',
                 padding: '0pt 16pt'
 
+            }}
+            sx={{
+                backgroundColor: 'background.sidePanel',
             }}
         >
             <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt', flexDirection: 'column', flexGrow: 1 }}>
@@ -75,7 +78,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
             >
                 {t('sidePanel.logOut')}
             </Button>
-        </div>
+        </Box>
     );
 }
 
