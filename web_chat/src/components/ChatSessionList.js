@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Box from '@mui/material/Box';
-import ChatSessionItem from './ChatSessionItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
@@ -60,6 +60,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         {chatSessions.map(chatSession => (
           <ListItemButton
             key={chatSession.id}
+            onClick={() => onSelectSession(chatSession.id)}
             sx={{
               height: '44px',
               marginBottom: '12px',
@@ -92,9 +93,13 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
                 }}
               />
             </ListItemIcon>
-            <ChatSessionItem
-              chatSession={chatSession}
-              onSelect={onSelectSession}
+            <ListItemText
+              primary={chatSession.name}
+              primaryTypographyProps={{ 
+                fontSize: '1em', 
+                color: 'text.primary',
+                fontWeight: 500 
+              }} 
             />
           </ListItemButton>
         ))}
