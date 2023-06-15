@@ -17,7 +17,7 @@ const theme = createTheme({
       contrastText: '#596175',
     },
     background: {
-      light: '#f1f1f1',
+      light: '#e1e1e1',
       dark: '#000000',
     },
     chatPanelBG: '#fcfaf5',
