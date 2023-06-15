@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 
 
 
-function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle }) {
+function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle, onLogout }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
@@ -26,6 +26,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           if (!response.ok) {
             if (response.status === 401) {
               // TODO: Handle 401 status (bad token)
+              onLogout();
               throw new Error("Unauthorized");
             } else if (response.status === 403) {
               // TODO: Handle 403 status (forbidden)

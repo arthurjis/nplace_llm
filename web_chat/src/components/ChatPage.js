@@ -191,6 +191,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     setSelectedChatSession={setSelectedChatSession}
                                     refreshChatSessions={handleRefreshChatSessions}
                                     handleDrawerToggle={handleDrawerToggle}
+                                    onLogout={onLogout}
                                 />
                             </Box>
                         </Box>
