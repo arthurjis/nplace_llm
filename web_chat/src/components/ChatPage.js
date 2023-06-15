@@ -17,13 +17,16 @@ const ChatPage = ({ token, onLogout }) => {
     const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
     const navigate = useNavigate();
     const handleLogout = useCallback(() => {
-        if (socket) {
-            socket.close();
-            setSocket(null);
-        }
+        setSocket((prevSocket) => {
+            if (prevSocket) {
+              prevSocket.close();
+              return null;
+            }
+            return prevSocket;
+          });
         setSelectedChatSession(null);
         onLogout();
-    }, [socket, onLogout]);
+    }, [onLogout]);
     const handleStartChat = () => {
         setSelectedChatSession(null);
     };
