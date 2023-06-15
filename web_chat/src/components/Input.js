@@ -46,7 +46,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         borderStyle: 'none',
         borderRadius: '30px', // Finetune
         backgroundColor: 'primary.light', // Finetune
-        height: '110px',
+        height: '47px',
       }}
     >
       <IconButton
