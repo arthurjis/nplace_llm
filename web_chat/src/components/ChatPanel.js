@@ -49,7 +49,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
     else {
       setMessages([]);
     }
-  }, [selectedChatSession, token]);
+  }, [selectedChatSession, token, handleLogout]);
 
   useEffect(() => {
     // Listen for new messages from the server

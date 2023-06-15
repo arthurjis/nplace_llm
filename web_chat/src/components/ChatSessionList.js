@@ -42,7 +42,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, [token]);
+  }, [token, handleLogout]);
 
   const onSelectSession = (chatSession) => {
     console.log(chatSession);

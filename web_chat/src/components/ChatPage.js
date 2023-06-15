@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socketIOClient from "socket.io-client";
 import ChatPanel from './ChatPanel';
@@ -16,14 +16,14 @@ const ChatPage = ({ token, onLogout }) => {
     const [selectedChatSession, setSelectedChatSession] = useState(null);
     const [refreshChatSessionsSignal, setRefreshChatSessionsSignal] = useState(Date.now());
     const navigate = useNavigate();
-    const handleLogout = () => {
+    const handleLogout = useCallback(() => {
         if (socket) {
             socket.close();
             setSocket(null);
         }
         setSelectedChatSession(null);
         onLogout();
-    };
+    }, [socket, onLogout]);
     const handleStartChat = () => {
         setSelectedChatSession(null);
     };
@@ -47,7 +47,7 @@ const ChatPage = ({ token, onLogout }) => {
         newSocket.on('error', function (error) {
             // Handle the error here.
             console.error('Error:', error);
-            if (error.code == 'INVALID_TOKEN') {
+            if (error.code === 'INVALID_TOKEN') {
                 handleLogout();
             }
         });
@@ -57,7 +57,7 @@ const ChatPage = ({ token, onLogout }) => {
             newSocket.off('error');
             newSocket.close();
         };
-    }, [token]);
+    }, [token, handleLogout]);
     useEffect(() => {
         if (socket) {
             console.log("Socket initialized");
