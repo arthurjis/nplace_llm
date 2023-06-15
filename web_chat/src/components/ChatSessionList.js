@@ -35,8 +35,8 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         return response.json();
       })
       .then(data => {
-        console.log(`Received ${data.chat_sessions.length} chat sessions`);
-        console.log(data.chat_sessions);
+        console.debug(`Received ${data.chat_sessions.length} chat sessions`);
+        console.debug(data.chat_sessions);
         setChatSessions(data.chat_sessions);
       })
       .catch((error) => {
@@ -45,7 +45,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
   }, [token, handleLogout]);
 
   const onSelectSession = (chatSession) => {
-    console.log(chatSession);
+    console.debug("Selected chat session " + chatSession);
     setSelectedChatSessionID(chatSession);
     onChatSessionSelect(chatSession);
   };
