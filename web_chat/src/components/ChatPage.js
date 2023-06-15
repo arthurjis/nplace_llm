@@ -124,7 +124,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     ? `${sidePanelOpen ? (width - maxChatPanelWidth - sidePanelWidth - marginBetweenPanels) / 2 : Math.max(width - maxChatPanelWidth, 0) / 2}px`
                                     : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth - 2}px`,
                                 transition: buttonClicked // Only transition if button was clicked
-                                    ? 'left 0.5s ease-out'
+                                    ? 'left 0.3s ease-out'
                                     : undefined,
                                 zIndex: isLargeScreen
                                     ? (sidePanelOpen && !buttonClicked) ? 3 : 1 // Put forth SidePanel when SidePanel open and not in transition
@@ -173,7 +173,7 @@ const ChatPage = ({ token, onLogout }) => {
                                 maxWidth: `${maxChatPanelWidth}px`,
                                 minWidth: `${minChatPanelWidth}px`,
                                 paddingLeft: (sidePanelOpen && isLargeScreen) ? `${sidePanelWidth + marginBetweenPanels}px` : '0px',
-                                transition: 'padding 0.5s ease',
+                                transition: 'padding 0.3s ease',
                                 zIndex: 2,
                                 // border: 1,
                                 // borderColor: '#AA1231',
