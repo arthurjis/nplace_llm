@@ -9,7 +9,8 @@
       "dontHaveAccount": "Don't have an account?",
       "signUp": "Sign up",
       "emailError": "Email is not valid.",
-      "loginError": "Wrong email or password."
+      "loginError": "Wrong email or password.",
+      "tooManyAttemptsError": "Too many attempts, please try again later."
     },
     "signup": {
       "createYourAccount": "Create your account",

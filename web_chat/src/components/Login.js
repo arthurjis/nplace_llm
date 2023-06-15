@@ -53,6 +53,8 @@ function Login({ onLogin }) {
             } catch (error) {
                 if (error.response.data.msg === 'Bad username or passcode') {
                     setLoginError(t('login.loginError'));
+                } else if (error.response.status === 429) {
+                    setLoginError(t('login.tooManyAttemptsError'));
                 } else {
                     console.error(error);
                 }
