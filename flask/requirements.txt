@@ -38,6 +38,7 @@ PyJWT==2.7.0
 python-dotenv==1.0.0
 python-engineio==4.4.1
 python-socketio==5.8.0
+redis==4.5.5
 requests==2.30.0
 rich==13.4.2
 six==1.16.0

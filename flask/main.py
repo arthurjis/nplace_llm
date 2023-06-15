@@ -1,11 +1,13 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
 from model import Users, Chatbots, ChatSessions, ChatMessages, SessionUsers, SessionChatbots
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_limiter.util import get_remote_address
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
-from flask_cors import CORS
+from flask_limiter import Limiter
 from sqlalchemy import desc, asc
 from dotenv import load_dotenv
+from flask_cors import CORS
 from functools import wraps
 from database import db
 
@@ -41,6 +43,8 @@ db.init_app(app)
 create_tables()
 current_time = datetime.datetime.now().time()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
+limiter = Limiter(app=app, key_func=get_remote_address, storage_uri=os.getenv('REDIS_URI'))
+
 
 @app.route('/')
 def index():
@@ -48,6 +52,7 @@ def index():
     return jsonify("Flask server running on host: {}    Starting at {}".format(host, time_string))
 
 @app.route('/login', methods=['POST'])
+@limiter.limit("5/minute")
 def login():
     id = request.json.get('email', None)
     passcode = request.json.get('password', None)
@@ -62,6 +67,7 @@ def login():
     return jsonify(access_token=access_token)
 
 @app.route('/register', methods=['POST'])
+@limiter.limit("5/minute")
 def register():
     id = request.json.get('email', None)
     passcode = generate_password_hash(request.json.get('password', None))
@@ -156,6 +162,7 @@ def send_message(data):
 
 @app.route('/chat_sessions', methods=['GET'])
 @jwt_required()
+@limiter.limit("30/minute")
 def chat_sessions():
     user_id = get_jwt_identity()
     if not user_id:
@@ -181,6 +188,7 @@ def chat_sessions():
 
 @app.route('/chat_history/<int:session_id>', methods=['GET'])
 @jwt_required()
+@limiter.limit("30/minute")
 def chat_history(session_id):
     user_id = get_jwt_identity()
     if not user_id:
