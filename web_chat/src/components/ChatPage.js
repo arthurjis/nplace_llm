@@ -48,7 +48,7 @@ const ChatPage = ({ token, onLogout }) => {
             // Handle the error here.
             console.error('Error:', error);
             if (error.code == 'INVALID_TOKEN') {
-                onLogout();
+                handleLogout();
             }
         });
         setSocket(newSocket);
@@ -191,7 +191,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     setSelectedChatSession={setSelectedChatSession}
                                     refreshChatSessions={handleRefreshChatSessions}
                                     handleDrawerToggle={handleDrawerToggle}
-                                    onLogout={onLogout}
+                                    handleLogout={handleLogout}
                                 />
                             </Box>
                         </Box>

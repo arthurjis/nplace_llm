@@ -56,7 +56,7 @@ def login():
     if not user or not check_password_hash(user.passcode, passcode):
         app.logger.error("Failed user login, user ID: {}".format(id))
         return jsonify({"msg": "Bad id or passcode"}), 401
-    access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(seconds=30)) 
+    access_token = create_access_token(identity=id, expires_delta=datetime.timedelta(hours=48)) 
     
     app.logger.info("Successful user login, user ID: {}".format(id))
     return jsonify(access_token=access_token)

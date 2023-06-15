@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
-function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal }) {
+function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal, handleLogout }) {
   const [chatSessions, setChatSessions] = useState([]);
   const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
@@ -24,6 +24,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         if (!response.ok) {
           if (response.status === 401) {
             // TODO: Handle 401 status (bad token)
+            handleLogout();
             throw new Error("Unauthorized");
           } else if (response.status === 404) {
             // TODO: Handle 404 status (not found)

@@ -35,6 +35,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                     token={token}
                     onChatSessionSelect={onChatSessionSelect}
                     refreshChatSessionsSignal={refreshChatSessionsSignal}
+                    handleLogout={handleLogout}
                 />
             </div>
 
