@@ -67,21 +67,21 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
               alignSelf: 'flex-start',
               borderRadius: '15px',
               border: 1,
-              borderColor: '#fbf7e6',
-              backgroundColor: chatSession.id === selectedChatSessionID ? '#fbf7e6' : 'transparent',
+              borderColor: 'primary.light',
+              backgroundColor: chatSession.id === selectedChatSessionID ? 'primary.light' : 'transparent',
               '&.MuiListItemButton-root': {
                 '&:hover': {
-                  backgroundColor: '#fbf7e6 !important', // override hover state
+                  backgroundColor: 'primary.light', // override hover state
                 },
                 '&.Mui-focusVisible': {
-                  backgroundColor: '#fbf7e6', // override focus state
+                  backgroundColor: 'primary.light', // override focus state
                 },
                 '& .MuiTouchRipple-root': {
                   display: 'none', // disable ripple effect
                 },
               },
               '&.Mui-selected': {
-                backgroundColor: '#fbf7e6', // override selected state
+                backgroundColor: 'primary.light', // override selected state
               },
             }}
           >
