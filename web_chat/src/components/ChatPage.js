@@ -105,7 +105,7 @@ const ChatPage = ({ token, onLogout }) => {
                     height: '100%',
                     position: 'absolute',
                     marginLeft: (width >= minChatPanelWidth) ? '0pt' : `${(minChatPanelWidth - width) / 2 + 1}px`, // In case where viewport width is less than content width and scrollX is enabled, add margin to push content to viewport center
-                    backgroundColor: 'background',
+                    backgroundColor: isMobile ? 'background.dark' : 'background.light',
                 }}
             >
                 {socket ? (
