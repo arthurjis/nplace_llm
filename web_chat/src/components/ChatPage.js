@@ -74,7 +74,7 @@ const ChatPage = ({ token, onLogout }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const minChatPanelWidth = 320;    // in px
-    const maxChatPanelWidth = 650;    // in px
+    const maxChatPanelWidth = 750;    // in px
     const sidePanelWidth = 260;       // in px
     const marginBetweenPanels = 30;   // in px
     const panelHeightPercentage = isMobile ? 100 : 90; // in %

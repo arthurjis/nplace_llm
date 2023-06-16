@@ -26,11 +26,11 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 display: 'flex',
                 flexDirection: 'column',
                 borderRadius: '30px',
-                padding: '0pt 16pt'
-
+                padding: '0pt 16pt',
             }}
             sx={{
                 backgroundColor: 'background.sidePanel',
+                boxShadow: 5,
             }}
         >
             <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt', flexDirection: 'column', flexGrow: 1 }}>
