@@ -9,13 +9,13 @@ const theme = createTheme({
       contrastText: '#596175',
     },
     secondary: {
-      main: '#f6cfbe',
+      main: '#82d862',
       light: '#B4F39A',
       dark: '#f2793d',
       contrastText: '#596175',
     },
     background: {
-      light: '#f3f5ee',
+      light: '#F3F5EE',
       dark: '#000000',
       sidePanel: '#D2CCC2',
       chatPanel: '#FCFAF5',
