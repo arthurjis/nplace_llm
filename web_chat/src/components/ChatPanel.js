@@ -105,6 +105,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   return (
     <Box
       sx={{
+        position: 'relative',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -115,13 +116,15 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         backgroundColor: 'background.chatPanel',   // Finetune
       }}
     >
+
+
       <Box
         sx={{
           position: 'relative',
           overflow: 'auto',
           flex: '1 1 auto',
           padding: '0em 1em',
-          margin: '2em 0em 1em 0em',
+          margin: '30px 0px 15px 0px',
           display: 'flex',
           flexDirection: 'column-reverse',
         }}
@@ -147,7 +150,17 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         />
       </Box>
 
-
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '30px',
+          left: '0',
+          right: '0',      
+          height: '15px',
+          background: 'linear-gradient(180deg, rgba(252,250,245,1) 0%, rgba(252,250,245,0) 100%)',  // Manually coverted chatPanelBG to RBG
+        }}
+      >
+      </Box>
     </Box>
 
   );
