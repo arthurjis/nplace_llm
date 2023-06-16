@@ -156,7 +156,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     top: 0,
                                     height: '100%',
                                     width: `${Math.max(width - maxChatPanelWidth, 0) / 2 - 1}px`,
-                                    backgroundColor: 'background',
+                                    backgroundColor: 'background.light',
                                     zIndex: 5
                                 }}
                             />

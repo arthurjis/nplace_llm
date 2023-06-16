@@ -42,7 +42,7 @@ function Input({ onSendMessage, handleMenuClick }) {
         flexDirection: 'row',
         alignItems: 'stretch',
         justifyContent: 'space-between',
-        margin: '20px 40px 20px', // Finetune
+        margin: 'auto 40px 30px', // Finetune
         borderStyle: 'none',
         borderRadius: '30px', // Finetune
         backgroundColor: 'primary.light', // Finetune

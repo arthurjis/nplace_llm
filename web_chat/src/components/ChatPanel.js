@@ -12,7 +12,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (!token){
+    if (!token) {
       return;
     }
     if (selectedChatSession) {
@@ -120,7 +120,8 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           position: 'relative',
           overflow: 'auto',
           flex: '1 1 auto',
-          p: 2,
+          padding: '0em 1em',
+          margin: '2em 0em 1em 0em',
           display: 'flex',
           flexDirection: 'column-reverse',
         }}
@@ -138,23 +139,15 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           <div ref={messagesEndRef} />
         </Box>
       </Box>
+      <Box
+      >
+        <Input className="chat-input"
+          onSendMessage={handleSendMessage}
+          handleMenuClick={handleDrawerToggle}
+        />
+      </Box>
 
 
-      {/* <Box
-        sx={{
-          overflow: 'auto',
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      > */}
-
-      {/* </Box> */}
-      {/* <Box sx={{ flexGrow: 1 }} /> */}
-      <Input className="chat-input"
-        onSendMessage={handleSendMessage}
-        handleMenuClick={handleDrawerToggle}
-      />
     </Box>
 
   );
