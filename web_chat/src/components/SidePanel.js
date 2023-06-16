@@ -53,7 +53,7 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
     }, [language, i18n]);
     useEffect(() => {
         fetchUsername();
-    }, [token])
+    }, [token, fetchUsername])
 
     return (
         <Box
