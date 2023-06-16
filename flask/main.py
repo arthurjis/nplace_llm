@@ -161,6 +161,22 @@ def send_message(data):
     db.session.commit()
     emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)
 
+@app.route('/get_username', methods=['GET'])
+@jwt_required()
+@limiter.limit("30/minute")
+def get_username():
+    name = get_jwt_identity()
+    if not name:
+        app.logger.error("Failed to retrieve chat session, bad username: {}".format(name))
+        return jsonify({"msg": "No chat sessions found"}), 404
+
+    user = db.session.query(Users).filter_by(name=name).first()
+    if not user:
+        app.logger.error("Failed to retrieve chat session, user not found, username: {}".format(name))
+        return jsonify({"msg": "No chat sessions found"}), 404  
+    app.logger.debug("Success to retrieve username {}".format(user.name))
+    return jsonify({"username": user.name})
+
 @app.route('/chat_sessions', methods=['GET'])
 @jwt_required()
 @limiter.limit("30/minute")

@@ -2,22 +2,58 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import ChatSessionList from './ChatSessionList';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 
 
-
-
-function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userName }) {
+function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout }) {
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
     const { t, i18n } = useTranslation();
+    const [userName, setUserName] = useState('');
+
+    const fetchUsername = useCallback(() => {
+        if (!token) {
+            return;
+        }
+        fetch(process.env.REACT_APP_SERVER_URL + '/get_username', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // TODO: Handle 401 status (bad token)
+                        handleLogout();
+                        throw new Error("Unauthorized");
+                    } else if (response.status === 404) {
+                        // TODO: Handle 404 status (not found)
+                        throw new Error("The chat session you're trying to access was not found.");
+                    }
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.debug(`Fetched username ${data.username} `);
+                setUserName(data.username);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }, [token, handleLogout]);
+
+
     // Change language based on the URL parameter
     useEffect(() => {
         i18n.changeLanguage(language);
     }, [language, i18n]);
+    useEffect(() => {
+        fetchUsername();
+    }, [token])
 
     return (
         <Box
