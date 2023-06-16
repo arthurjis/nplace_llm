@@ -230,7 +230,16 @@ function Signup({ onLogin }) {
                                 borderRadius: '30px',
                                 textTransform: 'none',
                                 fontSize: '16px',
-                                bgcolor: 'primary.main',
+                                bgcolor: 'secondary.light',
+                                '&:hover': {
+                                    bgcolor: 'secondary.light', // same color on hover
+                                },
+                                '&.Mui-focusVisible': {
+                                    bgcolor: 'secondary.light', // same color on focus
+                                },
+                                '&.MuiButton-contained.Mui-active': {
+                                    bgcolor: 'secondary.main', // changes color when clicked
+                                }
                             }}
                         >
                             {t('signup.continue')}

@@ -211,7 +211,16 @@ function Login({ onLogin }) {
                                 borderRadius: '30px',
                                 textTransform: 'none',
                                 fontSize: '16px',
-                                bgcolor: 'primary.main',
+                                bgcolor: 'secondary.light',
+                                '&:hover': {
+                                    bgcolor: 'secondary.light', // same color on hover
+                                },
+                                '&.Mui-focusVisible': {
+                                    bgcolor: 'secondary.light', // same color on focus
+                                },
+                                '&.MuiButton-contained.Mui-active': {
+                                    bgcolor: 'secondary.main', // changes color when clicked
+                                }
                             }}
                         >
                             {t('login.continue')}
@@ -220,7 +229,7 @@ function Login({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             {t('login.dontHaveAccount')}{' '}
-                            <Link component={RouterLink} to={`/${lang}/register`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500  }}>
+                            <Link component={RouterLink} to={`/${lang}/register`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500 }}>
                                 {t('login.signUp')}
                             </Link>
                         </Typography>
