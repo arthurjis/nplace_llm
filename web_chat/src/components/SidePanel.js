@@ -4,12 +4,12 @@ import ChatSessionList from './ChatSessionList';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 
 
 
-function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userEmail }) {
+function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout, userName }) {
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
@@ -42,6 +42,24 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 />
             </div>
 
+            <Box
+                sx={{
+                    height: '2px',
+                    backgroundColor: 'primary.dark',
+                    my: '10px',
+                }}
+            />
+            <Typography
+                variant="body1"
+                component="span"
+                sx={{
+                    alignSelf: 'center',
+                    mb: '10px',
+                    color: 'text.primary',
+                }}
+            >
+                {userName}
+            </Typography>
             <Button
                 variant="contained"
                 onClick={handleStartChat}
