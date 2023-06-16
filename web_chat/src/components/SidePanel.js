@@ -48,10 +48,10 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 style={{
                     width: '100%',
                     marginTop: 'auto',
-                    height: '44px',
+                    height: '47px',
                     borderRadius: '15px',
                     textTransform: 'none',
-                    fontSize: '16px',
+                    fontSize: '18px',
                 }}
                 sx={{
                     backgroundColor: 'primary.light',
@@ -66,11 +66,11 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
                 style={{
                     width: '100%',
                     marginTop: '10px',
-                    marginBottom: '20px',
-                    height: '44px',
+                    marginBottom: '30px',
+                    height: '47px',
                     borderRadius: '15px',
                     textTransform: 'none',
-                    fontSize: '16px',
+                    fontSize: '18px',
                 }}
                 sx={{
                     backgroundColor: 'primary.light',

@@ -62,12 +62,13 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
             key={chatSession.id}
             onClick={() => onSelectSession(chatSession.id)}
             sx={{
-              height: '44px',
+              height: '64px',
+              left: '1%',
+              width: "98%",
               marginBottom: '12px',
               alignSelf: 'flex-start',
               borderRadius: '15px',
-              border: 1,
-              borderColor: 'primary.dark',
+              boxShadow: 3,
               backgroundColor: chatSession.id === selectedChatSessionID ? 'primary.light' : 'transparent',
               '&.MuiListItemButton-root': {
                 '&:hover': {
