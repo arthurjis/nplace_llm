@@ -67,7 +67,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
               alignSelf: 'flex-start',
               borderRadius: '15px',
               border: 1,
-              borderColor: 'primary.light',
+              borderColor: 'primary.dark',
               backgroundColor: chatSession.id === selectedChatSessionID ? 'primary.light' : 'transparent',
               '&.MuiListItemButton-root': {
                 '&:hover': {
