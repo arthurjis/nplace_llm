@@ -157,7 +157,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           top: '30px',
           left: '0',
           right: '0',      
-          height: '15px',
+          height: '10px',
           background: 'linear-gradient(180deg, rgba(252,250,245,1) 0%, rgba(252,250,245,0) 100%)',  // Manually coverted chatPanelBG to RBG
         }}
       >
