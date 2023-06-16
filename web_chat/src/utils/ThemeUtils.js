@@ -3,9 +3,7 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      // main: '#6200EE',
-      // main: '#B1B695',
-      main: '#b9dcf2',
+      main: '#D2CCC2',
       light: '#EDEBE6',
       dark: '#C9C8C3',
       contrastText: '#596175',
@@ -17,9 +15,9 @@ const theme = createTheme({
       contrastText: '#596175',
     },
     background: {
-      light: '#E6E4DF',
+      light: '#f3f5ee',
       dark: '#000000',
-      sidePanel: '#EFEDAF',
+      sidePanel: '#D2CCC2',
       chatPanel: '#FCFAF5',
     },
     liked: {
