@@ -114,7 +114,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         width: '100%',
         borderRadius: '30px',   // Finetune
         backgroundColor: 'background.chatPanel',   // Finetune
-        boxShadow: 5,
+        boxShadow: 2,
       }}
     >
 

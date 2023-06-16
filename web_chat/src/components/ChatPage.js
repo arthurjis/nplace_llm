@@ -122,7 +122,7 @@ const ChatPage = ({ token, onLogout }) => {
                                 backgroundColor: 'transparent',
                                 left: isLargeScreen
                                     ? `${sidePanelOpen ? (width - maxChatPanelWidth - sidePanelWidth - marginBetweenPanels) / 2 : Math.max(width - maxChatPanelWidth, 0) / 2}px`
-                                    : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth - 2}px`,
+                                    : `${sidePanelOpen ? Math.max(width - maxChatPanelWidth, 0) / 2 : (width - maxChatPanelWidth) / 2 - sidePanelWidth - 4}px`,
                                 transition: buttonClicked // Only transition if button was clicked
                                     ? 'left 0.3s ease-out'
                                     : undefined,
@@ -155,7 +155,7 @@ const ChatPage = ({ token, onLogout }) => {
                                     left: 0,
                                     top: 0,
                                     height: '100%',
-                                    width: `${Math.max(width - maxChatPanelWidth, 0) / 2 - 1}px`,
+                                    width: `${Math.max(width - maxChatPanelWidth, 0) / 2 - 2}px`,
                                     backgroundColor: 'background.light',
                                     zIndex: 5
                                 }}
