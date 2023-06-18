@@ -49,6 +49,7 @@ function Signup({ onLogin }) {
         } else {
             if (password.length < 8) {
                 setPasswordError(t('signup.passwordError'));
+                setIsLoading(false);
                 return;
             }
             const SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -184,6 +185,7 @@ function Signup({ onLogin }) {
 
                                 }}
                                 error={!!passwordError}
+                                helperText={<HelperText error={!!passwordError}>{passwordError}</HelperText>}
                                 sx={{
                                     '.MuiOutlinedInput-root': {
                                         '& fieldset': {
@@ -218,7 +220,7 @@ function Signup({ onLogin }) {
                         </>
                     )}
                     <Box pt={3}>
-                    <Button
+                        <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -228,7 +230,16 @@ function Signup({ onLogin }) {
                                 borderRadius: '30px',
                                 textTransform: 'none',
                                 fontSize: '16px',
-                                bgcolor: 'primary.main',
+                                bgcolor: 'secondary.light',
+                                '&:hover': {
+                                    bgcolor: 'secondary.light', // same color on hover
+                                },
+                                '&.Mui-focusVisible': {
+                                    bgcolor: 'secondary.light', // same color on focus
+                                },
+                                '&.MuiButton-contained.Mui-active': {
+                                    bgcolor: 'secondary.main', // changes color when clicked
+                                }
                             }}
                         >
                             {t('signup.continue')}
@@ -237,7 +248,7 @@ function Signup({ onLogin }) {
                     <Box pt={2}>
                         <Typography variant="body2">
                             {t('signup.alreadyHaveAccount')}{' '}
-                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500  }}>
+                            <Link component={RouterLink} to={`/${lang}/login`} variant="body2" color="primary.contrastText" style={{ textTransform: 'none', backgroundColor: 'transparent', textDecoration: 'none', fontWeight: 500 }}>
                                 {t('signup.logIn')}
                             </Link>
                         </Typography>

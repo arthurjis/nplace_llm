@@ -12,7 +12,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (!token){
+    if (!token) {
       return;
     }
     if (selectedChatSession) {
@@ -105,6 +105,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   return (
     <Box
       sx={{
+        position: 'relative',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
@@ -112,15 +113,19 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         height: '100%',
         width: '100%',
         borderRadius: '30px',   // Finetune
-        backgroundColor: 'chatPanelBG',   // Finetune
+        backgroundColor: 'background.chatPanel',   // Finetune
+        boxShadow: 2,
       }}
     >
+
+
       <Box
         sx={{
           position: 'relative',
           overflow: 'auto',
           flex: '1 1 auto',
-          p: 2,
+          padding: '0em 1em',
+          margin: '30px 0px 15px 0px',
           display: 'flex',
           flexDirection: 'column-reverse',
         }}
@@ -138,23 +143,25 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           <div ref={messagesEndRef} />
         </Box>
       </Box>
+      <Box
+      >
+        <Input className="chat-input"
+          onSendMessage={handleSendMessage}
+          handleMenuClick={handleDrawerToggle}
+        />
+      </Box>
 
-
-      {/* <Box
+      <Box
         sx={{
-          overflow: 'auto',
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
+          position: 'absolute',
+          top: '30px',
+          left: '0',
+          right: '0',      
+          height: '10px',
+          background: 'linear-gradient(180deg, rgba(252,250,245,1) 0%, rgba(252,250,245,0) 100%)',  // Manually coverted chatPanelBG to RBG
         }}
-      > */}
-
-      {/* </Box> */}
-      {/* <Box sx={{ flexGrow: 1 }} /> */}
-      <Input className="chat-input"
-        onSendMessage={handleSendMessage}
-        handleMenuClick={handleDrawerToggle}
-      />
+      >
+      </Box>
     </Box>
 
   );
