@@ -89,7 +89,6 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
 
     if (!selectedChatSession) {
       socket.emit('start_chat', {}, (response) => {
-        setSelectedChatSession(response.chat_session_id);
         userMessage.chat_session_id = response.chat_session_id;
         socket.emit('send_message', userMessage);
         console.debug('Sent message: ', userMessage);

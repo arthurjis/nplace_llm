@@ -9,9 +9,9 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 
-function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal, handleLogout }) {
+function ChatSessionList({ token, selectedChatSession, setSelectedChatSession, refreshChatSessionsSignal, handleLogout }) {
   const [chatSessions, setChatSessions] = useState([]);
-  const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
+  // const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
     if (!token) {
@@ -48,8 +48,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
 
   const onSelectSession = (chatSession) => {
     console.debug("Selected chat session " + chatSession);
-    setSelectedChatSessionID(chatSession);
-    onChatSessionSelect(chatSession);
+    setSelectedChatSession(chatSession);
   };
 
   const deleteChatSession = (chatSessionId, event) => {
@@ -81,6 +80,7 @@ function ChatSessionList({ token, onChatSessionSelect, refreshChatSessionsSignal
         }
         console.log(`Deleted chat session ${chatSessionId}`);
         fetchChatSessions();
+        setSelectedChatSession(null);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -107,7 +107,7 @@ return (
             alignSelf: 'flex-start',
             borderRadius: '15px',
             boxShadow: 3,
-            backgroundColor: chatSession.id === selectedChatSessionID ? 'primary.light' : 'transparent',
+            backgroundColor: chatSession.id === selectedChatSession ? 'primary.light' : 'transparent',
             '&.MuiListItemButton-root': {
               '&:hover': {
                 backgroundColor: 'primary.light', // override hover state
@@ -140,7 +140,7 @@ return (
               fontWeight: 500
             }}
           />
-          {chatSession.id === selectedChatSessionID &&
+          {chatSession.id === selectedChatSession &&
             <IconButton
               edge="end"
               aria-label="delete"

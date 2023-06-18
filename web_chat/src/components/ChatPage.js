@@ -30,9 +30,6 @@ const ChatPage = ({ token, onLogout }) => {
     const handleStartChat = () => {
         setSelectedChatSession(null);
     };
-    const handleChatSessionSelect = (chatSession) => {
-        setSelectedChatSession(chatSession);
-    };
     const handleRefreshChatSessions = () => {
         setRefreshChatSessionsSignal(Date.now());
     };
@@ -139,7 +136,8 @@ const ChatPage = ({ token, onLogout }) => {
                             >
                                 <SidePanel
                                     token={token}
-                                    onChatSessionSelect={handleChatSessionSelect}
+                                    selectedChatSession={selectedChatSession}
+                                    setSelectedChatSession={setSelectedChatSession}
                                     refreshChatSessionsSignal={refreshChatSessionsSignal}
                                     handleStartChat={handleStartChat}
                                     handleLogout={handleLogout}
