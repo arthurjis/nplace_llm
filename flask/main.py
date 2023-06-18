@@ -144,11 +144,15 @@ def send_message(data):
     db.session.commit()
 
     # Fetch chat session history
-    chat_session_history = simple_gpt_chatbot.get_chat_session_history(chat_session_id)
+    chat_session_history = simple_gpt_chatbot.get_chat_session_history(chat_session_id, N=8)
+
+    # Select chatbot to respond
+    # No group chat logic implemented. Just using the one chatbot in a session
+    chatbot = chat_session.chatbots[0].chatbots
 
     # Generate chatbot's response
     response = simple_gpt_chatbot.generate_chatbot_response(chat_session_history)
-    response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbots.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
+    response_message = ChatMessages(sender_id=chatbot.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
     db.session.add(response_message)
     db.session.commit()
     emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)

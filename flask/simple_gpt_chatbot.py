@@ -29,9 +29,6 @@ def get_chat_session_history(chat_session_id, N=8):
     )
     # Reverse the result to maintain the chronological order
     chat_session_history = [{"role": "assistant" if row.role == 'chatbot' else row.role, "content": row.content} for row in reversed(list(result))]
-    print()
-    print(chat_session_history)
-    print()
     return chat_session_history
 
 
