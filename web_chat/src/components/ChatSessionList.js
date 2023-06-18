@@ -146,7 +146,7 @@ return (
               aria-label="delete"
               onClick={(event) => deleteChatSession(chatSession.id, event)}
             >
-              <DeleteOutlineIcon sx={{ fontSize: '24px', color: 'primary.main.contrastText' }} />
+              <DeleteOutlineIcon sx={{ fontSize: '25px', color: 'primary.main.contrastText' }} />
             </IconButton>
           }
         </ListItemButton>
