@@ -7,7 +7,7 @@ from database import db
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_chat_session_history(chat_session_id):
+def get_chat_session_history(chat_session_id, N=8):
     """
     Retrieves the history of a chat session given its ID.
 
@@ -22,11 +22,13 @@ def get_chat_session_history(chat_session_id):
             SELECT sender_type AS role, message AS content 
             FROM chat_messages
             WHERE chat_session_id = :chat_session_id
-            ORDER BY timestamp ASC
+            ORDER BY timestamp DESC
+            LIMIT :N
         """), 
-        {'chat_session_id': chat_session_id}
+        {'chat_session_id': chat_session_id, 'N': N}
     )
-    chat_session_history = [{"role": "assistant" if row.role == 'chatbot' else row.role, "content": row.content} for row in result]
+    # Reverse the result to maintain the chronological order
+    chat_session_history = [{"role": "assistant" if row.role == 'chatbot' else row.role, "content": row.content} for row in reversed(list(result))]
     return chat_session_history
 
 
@@ -52,7 +54,8 @@ def generate_chatbot_response(chat_session_history):
             temperature=1,
         )
         if 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0] and 'content' in response['choices'][0]['message']:
-            return response['choices'][0]['message']['content']
+            # return response['choices'][0]['message']['content']
+            return response
         else:
             print("Bad response from OpenAI API")
             return "I'm sorry, I couldn't generate a response. Please try again."

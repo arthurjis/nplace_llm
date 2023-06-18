@@ -78,8 +78,7 @@ function Message({ message, isLocal, likedByRemote }) {
                 color: 'primary.contrastText',
               }}
             >
-              {/* {message.username} */}
-              {'Chatbot'}
+              {message.username}
             </Typography>
           )}
           <Typography

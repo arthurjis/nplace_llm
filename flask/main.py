@@ -144,14 +144,23 @@ def send_message(data):
     db.session.commit()
 
     # Fetch chat session history
-    chat_session_history = simple_gpt_chatbot.get_chat_session_history(chat_session_id)
+    chat_session_history = simple_gpt_chatbot.get_chat_session_history(chat_session_id, N=8)
+
+    # Select chatbot to respond
+    # No group chat logic implemented. Just using the one chatbot in a session
+    chatbot = chat_session.chatbots[0].chatbots
 
     # Generate chatbot's response
     response = simple_gpt_chatbot.generate_chatbot_response(chat_session_history)
-    response_message = ChatMessages(sender_id=chat_session.chatbots[0].chatbots.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
+    response_text = response['choices'][0]['message']['content']
+    prompt_tokens = response['usage']['prompt_tokens']
+    completion_tokens = response['usage']['completion_tokens']
+    response_message = ChatMessages(sender_id=chatbot.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response_text)
     db.session.add(response_message)
+    chat_session.prompt_tokens += prompt_tokens
+    chat_session.completion_tokens += completion_tokens
     db.session.commit()
-    emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)
+    emit('new_message', {'chat_session_id': chat_session.id, 'text': response_text, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)
 
 @app.route('/get_username', methods=['GET'])
 @jwt_required()
@@ -221,7 +230,23 @@ def chat_history(session_id):
         return jsonify({"msg": "Unauthorized"}), 403
 
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
-    messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages]
+
+    # Fetch unique sender_ids for users and chatbots separately
+    user_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "user"))
+    chatbot_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "chatbot"))
+
+    # Fetch user and chatbot details in batch
+    user_details = {user.id: user.name for user in Users.query.filter(Users.id.in_(user_sender_ids)).all()}
+    chatbot_details = {chatbot.id: chatbot.name for chatbot in Chatbots.query.filter(Chatbots.id.in_(chatbot_sender_ids)).all()}
+
+    messages_dict = [
+        {
+            "chat_session_id": chat_session.id,
+            "text": msg.message,
+            "username": user_details[msg.sender_id] if msg.sender_type == "user" else chatbot_details[msg.sender_id],
+            "isLocal": msg.sender_type == "user"
+        } for msg in messages
+    ]
 
     app.logger.debug("Success to retrieve chat history for chat session {}, username: {}".format(session_id, username))
     return jsonify({"messages": messages_dict})

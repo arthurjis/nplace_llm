@@ -23,6 +23,8 @@ function Input({ onSendMessage, handleMenuClick }) {
       onSendMessage(message);
       setMessage('');
       setInputActive(false);
+    } else if (e.type === 'submit') { 
+      e.preventDefault();
     }
   };
   const handleBlur = () => {
