@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 
 
-function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, handleStartChat, handleLogout }) {
+function SidePanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessionsSignal, handleStartChat, handleLogout }) {
     const { lang } = useParams();
     const validLanguages = ['en', 'zh'];
     const language = validLanguages.includes(lang) ? lang : 'en';  // Fallback to 'en' if invalid
@@ -72,7 +72,8 @@ function SidePanel({ token, onChatSessionSelect, refreshChatSessionsSignal, hand
             <div style={{ overflow: 'auto', marginBottom: '10pt', marginTop: '20pt', flexDirection: 'column', flexGrow: 1 }}>
                 <ChatSessionList
                     token={token}
-                    onChatSessionSelect={onChatSessionSelect}
+                    selectedChatSession={selectedChatSession}
+                    setSelectedChatSession={setSelectedChatSession}
                     refreshChatSessionsSignal={refreshChatSessionsSignal}
                     handleLogout={handleLogout}
                 />
