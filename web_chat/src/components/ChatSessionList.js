@@ -11,7 +11,6 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 function ChatSessionList({ token, selectedChatSession, setSelectedChatSession, refreshChatSessionsSignal, handleLogout }) {
   const [chatSessions, setChatSessions] = useState([]);
-  // const [selectedChatSessionID, setSelectedChatSessionID] = useState(null);
 
   const fetchChatSessions = useCallback(() => {
     if (!token) {
@@ -52,7 +51,6 @@ function ChatSessionList({ token, selectedChatSession, setSelectedChatSession, r
   };
 
   const deleteChatSession = (chatSessionId, event) => {
-    console.log(`Delete chat session ${chatSessionId}`);
     if (!token) {
       return;
     }
@@ -78,9 +76,9 @@ function ChatSessionList({ token, selectedChatSession, setSelectedChatSession, r
           }
           throw new Error("Network response was not ok");
         }
-        console.log(`Deleted chat session ${chatSessionId}`);
-        fetchChatSessions();
+        console.debug(`Deleted chat session ${chatSessionId}`);
         setSelectedChatSession(null);
+        fetchChatSessions();
       })
       .catch((error) => {
         console.error('Error:', error);
