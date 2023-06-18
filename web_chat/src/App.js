@@ -35,6 +35,7 @@ function App() {
             <Route path="/:lang/chat" element={<ChatPage token={token} onLogout={handleLogout} />} />
             <Route path="/chat" element={<RedirectWithLang to="/chat" />} />
             <Route path="/" element={<RedirectWithLang to="/login" />} />
+            <Route path="/:lang" element={<RedirectWithLang to="/login" />} />
           </Routes>
         </div>
       </Router>
