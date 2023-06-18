@@ -72,7 +72,7 @@ class ChatSessions(db.Model):
     __tablename__ = 'chat_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False, default=lambda: datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+    name = db.Column(db.String, nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M"))
     last_opened = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     session_type = db.Column(db.Integer, nullable=False, default=0)
