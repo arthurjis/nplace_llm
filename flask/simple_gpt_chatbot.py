@@ -7,7 +7,7 @@ from database import db
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_chat_session_history(chat_session_id):
+def get_chat_session_history(chat_session_id, N=8):
     """
     Retrieves the history of a chat session given its ID.
 
@@ -22,11 +22,16 @@ def get_chat_session_history(chat_session_id):
             SELECT sender_type AS role, message AS content 
             FROM chat_messages
             WHERE chat_session_id = :chat_session_id
-            ORDER BY timestamp ASC
+            ORDER BY timestamp DESC
+            LIMIT :N
         """), 
-        {'chat_session_id': chat_session_id}
+        {'chat_session_id': chat_session_id, 'N': N}
     )
-    chat_session_history = [{"role": "assistant" if row.role == 'chatbot' else row.role, "content": row.content} for row in result]
+    # Reverse the result to maintain the chronological order
+    chat_session_history = [{"role": "assistant" if row.role == 'chatbot' else row.role, "content": row.content} for row in reversed(list(result))]
+    print()
+    print(chat_session_history)
+    print()
     return chat_session_history
 
 
