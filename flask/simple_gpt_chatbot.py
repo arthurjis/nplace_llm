@@ -54,7 +54,8 @@ def generate_chatbot_response(chat_session_history):
             temperature=1,
         )
         if 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0] and 'content' in response['choices'][0]['message']:
-            return response['choices'][0]['message']['content']
+            # return response['choices'][0]['message']['content']
+            return response
         else:
             print("Bad response from OpenAI API")
             return "I'm sorry, I couldn't generate a response. Please try again."

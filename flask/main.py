@@ -152,10 +152,15 @@ def send_message(data):
 
     # Generate chatbot's response
     response = simple_gpt_chatbot.generate_chatbot_response(chat_session_history)
-    response_message = ChatMessages(sender_id=chatbot.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response)
+    response_text = response['choices'][0]['message']['content']
+    prompt_tokens = response['usage']['prompt_tokens']
+    completion_tokens = response['usage']['completion_tokens']
+    response_message = ChatMessages(sender_id=chatbot.id, sender_type='chatbot', chat_session_id=chat_session.id, message=response_text)
     db.session.add(response_message)
+    chat_session.prompt_tokens += prompt_tokens
+    chat_session.completion_tokens += completion_tokens
     db.session.commit()
-    emit('new_message', {'chat_session_id': chat_session.id, 'text': response, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)
+    emit('new_message', {'chat_session_id': chat_session.id, 'text': response_text, 'username': chat_session.chatbots[0].chatbot_name, 'isLocal': False}, room=request.sid)
 
 @app.route('/get_username', methods=['GET'])
 @jwt_required()
