@@ -64,7 +64,7 @@ class ChatSessions(db.Model):
     session_type: A integer for session type
     prompt_tokens: Total prompt tokens in this session
     completion_tokens: Total completion tokens in this session
-    status: The status of the chat session, options include active, disabled, or deleted.
+    status: The status of the chat session, options include active or deleted.
     users: A list of users that are part of this chat session.
     chatbots: A list of chatbots that are part of this chat session.
     messages: A list of messages that belong to this chat session.
