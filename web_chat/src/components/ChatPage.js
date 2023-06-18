@@ -60,7 +60,7 @@ const ChatPage = ({ token, onLogout }) => {
     }, [token, handleLogout]);
     useEffect(() => {
         if (socket) {
-            console.log("Socket initialized");
+            console.debug("Socket initialized");
         }
     }, [socket]);
 

@@ -61,7 +61,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
     // Listen for 'chat_session_started' from the server
     socket.on('chat_session_started', (data) => {
       setSelectedChatSession(data.chat_session_id);
-      console.log('Chat session started with id: ' + data.chat_session_id);
+      console.debug('Chat session started with id: ' + data.chat_session_id);
     });
 
     return () => {
