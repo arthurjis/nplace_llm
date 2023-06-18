@@ -225,7 +225,23 @@ def chat_history(session_id):
         return jsonify({"msg": "Unauthorized"}), 403
 
     messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
-    messages_dict = [{"chat_session_id": chat_session.id, "text": msg.message, "username": msg.sender_id, "isLocal": msg.sender_type == "user"} for msg in messages]
+
+    # Fetch unique sender_ids for users and chatbots separately
+    user_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "user"))
+    chatbot_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "chatbot"))
+
+    # Fetch user and chatbot details in batch
+    user_details = {user.id: user.name for user in Users.query.filter(Users.id.in_(user_sender_ids)).all()}
+    chatbot_details = {chatbot.id: chatbot.name for chatbot in Chatbots.query.filter(Chatbots.id.in_(chatbot_sender_ids)).all()}
+
+    messages_dict = [
+        {
+            "chat_session_id": chat_session.id,
+            "text": msg.message,
+            "username": user_details[msg.sender_id] if msg.sender_type == "user" else chatbot_details[msg.sender_id],
+            "isLocal": msg.sender_type == "user"
+        } for msg in messages
+    ]
 
     app.logger.debug("Success to retrieve chat history for chat session {}, username: {}".format(session_id, username))
     return jsonify({"messages": messages_dict})

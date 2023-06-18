@@ -90,7 +90,7 @@ class ChatMessages(db.Model):
     
     Columns:
     id: A unique integer that identifies a message.
-    sender_id: A string that represents the id of the sender.
+    sender_id: An integer that represents the id of the sender.
     sender_type: A string that represents the type of the sender ('user' or 'chatbot').
     chat_session_id: An integer that represents the id of the chat session the message belongs to.
     message: A string that contains the content of the message.
