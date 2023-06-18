@@ -16,14 +16,6 @@ import datetime
 import logging
 import os
 
-
-def jwt_required_wraps(func):
-    @wraps(func)
-    @jwt_required()
-    def wrapped(*args, **kwargs):
-        return func(*args, **kwargs)
-    return wrapped
-
 def create_tables():
     with app.app_context():
         db.create_all()
@@ -195,6 +187,7 @@ def chat_sessions():
     chat_sessions = db.session.query(ChatSessions).\
         join(SessionUsers).\
         filter(SessionUsers.user_name == name).\
+        filter(ChatSessions.status != 'deleted').\
         order_by(desc(ChatSessions.last_opened)).\
         all()
 
@@ -214,8 +207,13 @@ def chat_history(session_id):
 
     chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
     if not chat_session:
-        app.logger.error("Failed to retrieve chat history for chat session {}, username: {}".format(session_id, username))
+        app.logger.error("Failed to retrieve chat history for chat session {}, username: {}.Session not found".format(session_id, username))
         return jsonify({"msg": "Chat session not found"}), 404
+    
+    # Check for chat session status, if deleted return 403
+    if chat_session.status == 'deleted':
+        app.logger.error("Failed to retrieve chat history for chat session {}, username: {}. Session is deleted".format(session_id, username))
+        return jsonify({"msg": "Chat session deleted"}), 403
     
     # Verify the requesting user is part of this chat session
     if username not in [user.user_name for user in chat_session.users]:
@@ -227,6 +225,32 @@ def chat_history(session_id):
 
     app.logger.debug("Success to retrieve chat history for chat session {}, username: {}".format(session_id, username))
     return jsonify({"messages": messages_dict})
+
+@app.route('/chat_sessions/<int:session_id>', methods=['DELETE'])
+@jwt_required()
+@limiter.limit("30/minute")
+def delete_chat_session(session_id):
+    username = get_jwt_identity()
+    if not username:
+        app.logger.error("Failed to delete chat session, bad username: {}".format(username))
+        return jsonify({"msg": "No chat session found"}), 404
+
+    chat_session = db.session.query(ChatSessions).filter_by(id=session_id).first()
+    if not chat_session:
+        app.logger.error("Failed to delete chat session {}, username: {}".format(session_id, username))
+        return jsonify({"msg": "Chat session not found"}), 404
+    
+    # Verify the requesting user is part of this chat session
+    if username not in [user.user_name for user in chat_session.users]:
+        app.logger.error("Failed to delete chat session {}, username: {}. User not part of this chat session".format(session_id, username))
+        return jsonify({"msg": "Unauthorized"}), 403
+
+    # Soft delete the chat session by changing its status
+    chat_session.status = 'deleted'
+    db.session.commit()
+
+    app.logger.debug("Successfully deleted chat session {}, username: {}".format(session_id, username))
+    return jsonify({"msg": "Chat session deleted successfully"}), 200
 
 
 if __name__ == '__main__':
