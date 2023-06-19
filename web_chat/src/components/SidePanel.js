@@ -110,6 +110,12 @@ function SidePanel({ token, selectedChatSession, setSelectedChatSession, refresh
                 }}
                 sx={{
                     backgroundColor: 'primary.light',
+                    '&:hover': {
+                        bgcolor: 'primary.light', // same color on hover
+                    },
+                    '&:focus': {
+                        boxShadow: 2, // no shadow when button is focused (clicked or navigated to via keyboard)
+                    },
                 }}
             >
                 {t('sidePanel.startNewChat')}
@@ -129,6 +135,12 @@ function SidePanel({ token, selectedChatSession, setSelectedChatSession, refresh
                 }}
                 sx={{
                     backgroundColor: 'primary.light',
+                    '&:hover': {
+                        bgcolor: 'primary.light', // same color on hover
+                    },
+                    '&:focus': {
+                        boxShadow: 2, // no shadow when button is focused (clicked or navigated to via keyboard)
+                    },
                 }}
             >
                 {t('sidePanel.logOut')}

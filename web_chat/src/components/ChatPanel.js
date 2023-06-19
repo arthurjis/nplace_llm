@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import Message from './Message';
 import Input from './Input';
 import SocketContext from '../contexts/SocketContext';
@@ -9,57 +9,120 @@ import { Box } from '@mui/material';
 function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle, handleLogout }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
-  const messagesEndRef = useRef(null);
+  const [scrollToBottom, setScrollToBottom] = useState(false);
+  const size = 20; // Fetch 20 messages at a time
+  const scrollContainer = useRef(null);
+  const previousChatSession = useRef();
+  const moreMessagesToLoad = useRef(true);
+  const page = useRef(1);
+  const chatStarting = useRef(false);
 
-  useEffect(() => {
-    if (!token) {
+
+  const fetchChatHistory = useCallback(() => {
+    if (chatStarting.current) {
+      chatStarting.current = false;
       return;
     }
-    if (selectedChatSession) {
-      // Load chat history from the server
-      fetch(process.env.REACT_APP_SERVER_URL + '/chat_history/' + selectedChatSession, {
+    if (!token || !selectedChatSession) {
+      setMessages([]);
+      return;
+    }
+    if (selectedChatSession !== previousChatSession.current) {
+      setMessages([]);
+      page.current = 1;
+      moreMessagesToLoad.current = true;
+      scrollContainer.current.scrollTop = 0;
+    }
+
+    console.debug("Try fetching page " + page.current + " from chat session " + selectedChatSession + "...");
+    // Load chat history from the server
+    const fetchMessages = async () => {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/chat_history/${selectedChatSession}?page=${page.current}&size=${size}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
-      })
-        .then(response => {
-          if (!response.ok) {
-            if (response.status === 401) {
-              // TODO: Handle 401 status (bad token)
-              handleLogout();
-              throw new Error("Unauthorized");
-            } else if (response.status === 403) {
-              // TODO: Handle 403 status (forbidden)
-              throw new Error("You are not authorized to view this chat session.");
-            } else if (response.status === 404) {
-              // TODO: Handle 404 status (not found)
-              throw new Error("The chat session you're trying to access was not found.");
-            }
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then(data => {
-          setMessages(data.messages);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-    else {
-      setMessages([]);
-    }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          handleLogout();
+          throw new Error("Unauthorized");
+        } else if (response.status === 403) {
+          throw new Error("You are not authorized to view this chat session.");
+        } else if (response.status === 404) {
+          throw new Error("The chat session you're trying to access was not found.");
+        }
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      // If the number of messages received is less than size, set hasMore to false
+      if (data.messages.length < size) {
+        moreMessagesToLoad.current = false;
+      }
+      const reversedMessages = data.messages.reverse();
+      if (page.current === 1) {
+        setMessages(reversedMessages);
+      } else {
+        const currentScrollTop = scrollContainer.current.scrollTop;
+        setMessages(prevMessages => [...reversedMessages, ...prevMessages]);
+        scrollContainer.current.scrollTop = currentScrollTop;
+      }
+      previousChatSession.current = selectedChatSession;
+      console.debug("Loaded ", data.messages.length, " messages for page ", page.current, ", moreMessagesToLoad: " + moreMessagesToLoad.current);
+
+    };
+
+    fetchMessages().catch((error) => {
+      console.error('Error:', error);
+    });
   }, [selectedChatSession, token, handleLogout]);
+
+  useEffect(() => {
+    fetchChatHistory();
+  }, [selectedChatSession, token, fetchChatHistory])
+
+  useEffect(() => {
+    const currentScrollContainer = scrollContainer.current;
+
+    const handleScroll = () => {
+      if (!currentScrollContainer) {
+        return;
+      }
+      const { scrollTop, clientHeight, scrollHeight } = currentScrollContainer;
+      // Check if we're at the top of the scroll container, negative here because flex-direction: column-reverse
+      if (scrollTop - clientHeight + scrollHeight < 5 && clientHeight !== scrollHeight) {
+        console.debug('Scrolled to top');
+        console.log(scrollTop, clientHeight, scrollHeight);
+        if (moreMessagesToLoad.current === true) {
+          console.debug('Found more messages, loading new page');
+          page.current += 1;
+          fetchChatHistory();
+        }
+      }
+    };
+
+    currentScrollContainer.addEventListener('scroll', handleScroll);
+
+    return () => {
+      if (currentScrollContainer) {
+        currentScrollContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [fetchChatHistory]);
+
 
   useEffect(() => {
     // Listen for new messages from the server
     socket.on('new_message', (message) => {
       console.debug("Received message: " + JSON.stringify(message));
       setMessages((prevMessages) => [...prevMessages, message]);
+      setScrollToBottom(true);
     });
 
     // Listen for 'chat_session_started' from the server
     socket.on('chat_session_started', (data) => {
+      chatStarting.current = true;
       setSelectedChatSession(data.chat_session_id);
       console.debug('Chat session started with id: ' + data.chat_session_id);
     });
@@ -72,10 +135,15 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   }, [socket, setSelectedChatSession]);
 
   useEffect(() => {
-    // Scroll to bottom when new messages arrive
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
+    if (scrollToBottom && scrollContainer.current) {
+      scrollContainer.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      // Reset the scroll state after scrolling
+      setScrollToBottom(false);
+    }
+  }, [scrollToBottom]);
 
   function handleSendMessage(messageText) {
     // Add the user's message to the chat
@@ -86,6 +154,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
       isLocal: true,
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setScrollToBottom(true);
 
     if (!selectedChatSession) {
       socket.emit('start_chat', {}, (response) => {
@@ -128,6 +197,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           display: 'flex',
           flexDirection: 'column-reverse',
         }}
+        ref={scrollContainer}
       >
         <Box
           sx={{
@@ -139,7 +209,6 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           {messages.map((message, index) => (
             <Message key={index} message={message} isLocal={message.isLocal} likedByRemote={false} />
           ))}
-          <div ref={messagesEndRef} />
         </Box>
       </Box>
       <Box
@@ -155,7 +224,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
           position: 'absolute',
           top: '30px',
           left: '0',
-          right: '0',      
+          right: '0',
           height: '10px',
           background: 'linear-gradient(180deg, rgba(252,250,245,1) 0%, rgba(252,250,245,0) 100%)',  // Manually coverted chatPanelBG to RBG
         }}

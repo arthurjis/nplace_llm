@@ -5,10 +5,9 @@ from flask_limiter.util import get_remote_address
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_limiter import Limiter
-from sqlalchemy import desc, asc
+from sqlalchemy import desc
 from dotenv import load_dotenv
 from flask_cors import CORS
-from functools import wraps
 from database import db
 
 import simple_gpt_chatbot
@@ -229,8 +228,14 @@ def chat_history(session_id):
         app.logger.error("Failed to retrieve chat history for chat session {}, username: {}. User not part of this chat session".format(session_id, username))
         return jsonify({"msg": "Unauthorized"}), 403
 
-    messages = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(asc(ChatMessages.timestamp)).all()
-
+    # Get the page number and size from query parameters, defaults to 1 and 50 respectively
+    page = request.args.get('page', default=1, type=int)
+    page_size = request.args.get('size', default=50, type=int)
+    query = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(desc(ChatMessages.timestamp))
+    pagination = query.paginate(page=page, per_page=page_size, error_out=False)
+    # Get the items for the current page
+    messages = pagination.items
+    
     # Fetch unique sender_ids for users and chatbots separately
     user_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "user"))
     chatbot_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "chatbot"))
