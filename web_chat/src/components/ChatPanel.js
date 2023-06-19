@@ -76,11 +76,13 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   }, [selectedChatSession, token, fetchChatHistory])
 
   useEffect(() => {
+    const currentScrollContainer = scrollContainer.current;
+
     const handleScroll = () => {
-      if (!scrollContainer.current) {
+      if (!currentScrollContainer) {
         return;
       }
-      const { scrollTop, clientHeight, scrollHeight } = scrollContainer.current;
+      const { scrollTop, clientHeight, scrollHeight } = currentScrollContainer;
       // Check if we're at the top of the scroll container, negative here because flex-direction: column-reverse
       if (scrollTop - clientHeight + scrollHeight < 5 && clientHeight !== scrollHeight) {
         console.debug('Scrolled to top');
@@ -91,13 +93,16 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
         }
       }
     };
-    scrollContainer.current.addEventListener('scroll', handleScroll);
+
+    currentScrollContainer.addEventListener('scroll', handleScroll);
+
     return () => {
-      if (scrollContainer.current) {
-        scrollContainer.current.removeEventListener('scroll', handleScroll);
+      if (currentScrollContainer) {
+        currentScrollContainer.removeEventListener('scroll', handleScroll);
       }
     };
   }, [fetchChatHistory]);
+
 
   useEffect(() => {
     // Listen for new messages from the server
