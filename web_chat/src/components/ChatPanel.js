@@ -15,9 +15,14 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
   const previousChatSession = useRef();
   const moreMessagesToLoad = useRef(true);
   const page = useRef(1);
+  const chatStarting = useRef(false);
 
 
   const fetchChatHistory = useCallback(() => {
+    if (chatStarting.current) {
+      chatStarting.current = false;
+      return;
+    }
     if (!token || !selectedChatSession) {
       setMessages([]);
       return;
@@ -117,6 +122,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
 
     // Listen for 'chat_session_started' from the server
     socket.on('chat_session_started', (data) => {
+      chatStarting.current = true;
       setSelectedChatSession(data.chat_session_id);
       console.debug('Chat session started with id: ' + data.chat_session_id);
     });
