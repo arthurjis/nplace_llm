@@ -9,6 +9,7 @@ import { Box } from '@mui/material';
 function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refreshChatSessions, handleDrawerToggle, handleLogout }) {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
+  const [scrollToBottom, setScrollToBottom] = useState(false);
   const size = 20; // Fetch 20 messages at a time
   const scrollContainer = useRef(null);
   const previousChatSession = useRef();
@@ -86,6 +87,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
       // Check if we're at the top of the scroll container, negative here because flex-direction: column-reverse
       if (scrollTop - clientHeight + scrollHeight < 5 && clientHeight !== scrollHeight) {
         console.debug('Scrolled to top');
+        console.log(scrollTop, clientHeight, scrollHeight);
         if (moreMessagesToLoad.current === true) {
           console.debug('Found more messages, loading new page');
           page.current += 1;
@@ -109,6 +111,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
     socket.on('new_message', (message) => {
       console.debug("Received message: " + JSON.stringify(message));
       setMessages((prevMessages) => [...prevMessages, message]);
+      setScrollToBottom(true);
     });
 
     // Listen for 'chat_session_started' from the server
@@ -124,6 +127,17 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
     };
   }, [socket, setSelectedChatSession]);
 
+  useEffect(() => {
+    if (scrollToBottom && scrollContainer.current) {
+      scrollContainer.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      // Reset the scroll state after scrolling
+      setScrollToBottom(false);
+    }
+  }, [scrollToBottom]);
+
   function handleSendMessage(messageText) {
     // Add the user's message to the chat
     const userMessage = {
@@ -133,6 +147,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
       isLocal: true,
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setScrollToBottom(true);
 
     if (!selectedChatSession) {
       socket.emit('start_chat', {}, (response) => {
