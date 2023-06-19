@@ -19,6 +19,7 @@ function ChatPanel({ token, selectedChatSession, setSelectedChatSession, refresh
 
   const fetchChatHistory = useCallback(() => {
     if (!token || !selectedChatSession) {
+      setMessages([]);
       return;
     }
     if (selectedChatSession !== previousChatSession.current) {
