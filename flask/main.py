@@ -231,11 +231,10 @@ def chat_history(session_id):
     # Get the page number and size from query parameters, defaults to 1 and 50 respectively
     page = request.args.get('page', default=1, type=int)
     page_size = request.args.get('size', default=50, type=int)
-
-    messages = db.session.query(ChatMessages)\
-        .filter_by(chat_session_id=session_id)\
-        .order_by(desc(ChatMessages.timestamp))\
-        .paginate(page, page_size, error_out=False)
+    query = db.session.query(ChatMessages).filter_by(chat_session_id=session_id).order_by(desc(ChatMessages.timestamp))
+    pagination = query.paginate(page=page, per_page=page_size, error_out=False)
+    # Get the items for the current page
+    messages = pagination.items
     
     # Fetch unique sender_ids for users and chatbots separately
     user_sender_ids = list(set(msg.sender_id for msg in messages if msg.sender_type == "user"))
